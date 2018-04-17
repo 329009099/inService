@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suyin.expzhuan.mapper.ExperienceTaskMapper">
+
+	<select id="findExpCount" resultType="java.lang.Integer" parameterType="com.suyin.expzhuan.model.ExperienceTaskOrder" >
+	<![CDATA[
+	select
+		case when t.user_join>=t.user_total then 1 else 2 end  as count
+		from
+			t_exp_task t
+	where
+		t.exp_id=#{expId}
+	]]>
+	</select>
+	<!-- 根据活动id查询该活动分享信息 -->
+	<select id="findExpShareInfo" resultType="hashmap" parameterType="hashmap">
+	<![CDATA[
+		select
+			ifnull(t.share_img_url,'') as share_img_url,
+			t.share_title,
+			t.share_url,
+			t.title
+		from
+			t_exp_task t
+		where
+			t.exp_type = #{expType}
+		and
+		    t.exp_id = #{expId}
+	]]>
+	</select>
+	<!-- 齐心赚分享助力查询 -->
+	<select id="findExpTaskQinxinShareInfo" resultType="hashmap" parameterType="hashmap">
+	<![CDATA[
+	select
+		t.exp_id,
+		t.open_id,
+		t.share_id,
+		t.user_id
+	from
+			t_exp_task_share_detail t
+	where
+			t.exp_id = #{expId}
+		and t.user_id = #{userId}
+		and t.open_id = #{openId}
+	]]>
+	</select>
+	
+	<!-- 齐心赚分享助力记录 -->
+	<insert id="addExpTaskQinxinShareInfo" parameterType="hashmap">
+	<![CDATA[
+	insert into t_exp_task_share_detail(exp_id,open_id,user_id,create_time,update_time)
+	values
+	(#{expId},#{openId},#{userId},now(),now())
+	]]>
+	
+	</insert>
+	
+	<!-- 查询齐心赚金币活动信息 -->
+	<select id="findExperienceByTypeByPage" resultType="hashmap" parameterType="hashmap">
+		<![CDATA[
+			
+select *from(
+	select
+			t.exp_id,
+			t.exp_type,
+			t.show_type,
+			t.title,
+			t.is_begin,t.begin_time as begin_time1,
+			case when t.exp_remain_gold<1 or t.user_join>=t.user_total or now()>t.end_time then '0'
+				 when now()<t.begin_time then '1'
+				 when now() between t.begin_time and t.end_time then '2' 
+				 else '3' end as exp_gold_status,
+			case when t.user_join>=t.user_total then '0' else '1' end  as  exp_total_status,
+			case when now() between t.begin_time and t.end_time then '0'
+				 when now() < t.begin_time then '1'
+				 when now() > t.end_time then '2' 
+			end as exp_status,
+			t.exp_remain_gold,	
+			t.exp_count_gold,
+			t.user_join,
+			t.user_total,
+			t.user_browse_gold,
+			t.user_max_gold,
+			t.exp_user_gold,
+			t.exp_gold_max,
+			t.exp_gold_min,
+			t.member_name,
+			t.provin_id,
+			t.city_id,
+			date_format(t.begin_time,'%Y-%m-%d %H:%i:%s') as begin_time,
+			date_format(t.end_time,'%Y-%m-%d %H:%i:%s') as end_time,
+			t.user_share_gold,
+			t.exp_app_url,
+			t.share_url,
+			t.share_img_url,
+			t.exp_img_url,		
+			t.seq_num,
+			t.is_label,
+			t.label,
+			ifnull(t.down_img_url,'') as down_img_url,
+			ifnull(t.up_img_url,'') as up_img_url
+		from
+			t_exp_task t
+		where
+			find_in_set(#{regtype},t.client_type)>0
+			and 
+			t.exp_type = #{exp_type}			 
+			and
+			t.city_id = #{city_id}
+			and
+			t.is_begin=1
+	)s order by exp_gold_status desc,s.seq_num desc, begin_time1 desc
+	]]>
+	</select>
+
+   	<!-- 查询全名赚金币活动信息 -->
+	<select id="findQuminzhuanExpByTypeByPage" resultType="hashmap" parameterType="hashmap">
+		<![CDATA[
+			
+   select *from(
+	   select
+			t.exp_id,
+			t.exp_type,
+			t.show_type,
+			t.title,
+			t.is_begin,t.begin_time as begin_time1,
+			case when t.exp_remain_gold<1 or t.user_join>=t.user_total or now()>t.end_time then '0'
+				 when now()<t.begin_time then '1'
+				 when now() between t.begin_time and t.end_time then '2' 
+				 else '3' end as exp_gold_status,
+			case when t.user_join>=t.user_total then '0' else '1' end  as  exp_total_status,
+			case when now() between t.begin_time and t.end_time then '0'
+				 when now() < t.begin_time then '1'
+				 when now() > t.end_time then '2' 
+			end as exp_status,
+			t.exp_remain_gold,	
+			t.exp_count_gold,
+			t.user_join,
+			t.user_total,
+			t.user_browse_gold,
+			t.user_max_gold,
+			t.exp_user_gold,
+			t.exp_gold_max,
+			t.exp_gold_min,
+			t.member_name,
+			t.provin_id,
+			t.city_id,
+			date_format(t.begin_time,'%Y-%m-%d %H:%i:%s') as begin_time,
+			date_format(t.end_time,'%Y-%m-%d %H:%i:%s') as end_time,
+			t.user_share_gold,
+			t.exp_app_url,
+			t.share_url,
+			t.share_img_url,
+			t.exp_img_url,		
+			t.seq_num,
+			t.is_label,
+			t.label,
+			ifnull(t.down_img_url,'') as down_img_url,
+			ifnull(t.up_img_url,'') as up_img_url
+		from
+			t_exp_task t
+		where
+			find_in_set(#{regtype},t.client_type)>0
+			and 
+			t.exp_type = #{exp_type}			 
+			and
+			t.is_begin=1
+	)s order by exp_gold_status desc,s.seq_num desc, begin_time1 desc
+	]]>
+	</select>
+		
+	<select id="findExpById" resultType="hashmap" parameterType="hashmap">
+		<![CDATA[
+		select
+			t.app_info,
+			t.begin_time,
+			t.city_id,
+			t.create_time,
+			t.down_img_url,
+			t.end_time,
+			t.exp_app_url,
+			t.exp_count_gold,
+			t.exp_gold_max,
+			t.exp_gold_min,
+			t.exp_id,
+			t.exp_img_url,
+			t.exp_info,
+			t.exp_remain_gold,
+			t.exp_type,
+			t.exp_user_gold,
+			t.is_begin,
+			t.member_info,
+			t.member_name,
+			t.provin_id,
+			t.share_img_url,
+			t.share_title,
+			t.share_url,
+			t.show_type,
+			t.title,
+			t.update_time,
+			t.up_img_url,
+			t.user_browse_gold,
+			t.user_max_gold,
+			t.user_share_gold,
+			t.user_join,
+			t.user_total,
+			case when t.exp_remain_gold<1 then '0' else '1' end as exp_gold_status,
+			case when t.user_join>=t.user_total then '0' else '1' end  as  exp_total_status,
+			case when now() between t.begin_time and t.end_time then '0'
+						 when now() < t.begin_time then '1'
+						 when now() > t.end_time then '2' 
+					end as exp_status
+		from
+			t_exp_task t
+		where
+			t.exp_id = #{exp_id}
+		 ]]>
+	</select>
+
+	<resultMap type="com.suyin.expzhuan.model.ExperienceTaskOrder" id="ExpZhuanOrderMap">
+		<result column="order_id" property="orderId"/>
+		<result column="user_id" property="userId"/>
+		<result column="exp_id" property="expId"/>
+		<result column="regtype" property="regtype"/>
+		<result column="module_type" property="moduleType"/>
+		<result column="status" property="status"/>
+		<result column="total_gold" property="totalGold"/>
+		<result column="browse_count" property="browseCount"/>
+		<result column="image_url" property="imageUrl"/>
+	</resultMap>
+		
+	<!-- 两个赚的订单信息插入 -->
+	<insert id="addExpZhuanOrder" parameterType="com.suyin.expzhuan.model.ExperienceTaskOrder" useGeneratedKeys="true" keyColumn="order_id" keyProperty="orderId" >
+	<![CDATA[
+		insert t_exp_task_order (
+				user_id,
+				exp_id,
+				regtype,
+				module_type,
+				image_url,
+				show_type,
+				create_time,
+				status
+		)
+		select #{userId},#{expId},#{regtype},#{moduleType},#{imageUrl}, show_type,now(),
+		case when exp_type=0 then 1
+		else 0 end as status
+ from t_exp_task where exp_id=#{expId}
+		]]>
+	</insert>	
+	
+	<update id="addJoinedUserCount" parameterType="com.suyin.expzhuan.model.ExperienceTaskOrder">
+		update t_exp_task set user_join=user_join+1 where exp_id=#{expId}
+	</update>
+	
+	<!-- 查询用户是否参加过两个赚的活动 -->
+	<select id="isEverJoinExp" resultType="int" parameterType="com.suyin.expzhuan.model.ExperienceTaskOrder">
+		select count(1) from t_exp_task_order 
+		where user_id=#{userId} and exp_id=#{expId} 
+	</select>
+	<!-- 根据活动id和userId查询订单orderId -->
+	<select id="findUserTaskInvolv" resultType="hashmap" parameterType="com.suyin.expzhuan.model.ExperienceTaskOrder">
+		<![CDATA[
+		select
+			t.order_id,
+			t.user_id,
+			t.exp_id
+		from
+			t_exp_task_order t
+		where 
+			t.exp_id=#{expId}
+		and 
+			t.user_id=#{userId}
+		]]>
+	</select>
+	
+	<!-- 判断一个用户是否有资格参加全面赚的活动 ,
+	逻辑是用活动属性left join 用户的属性，如果用户属性少了，那么必有t2.d2是null，那么就找t1.d1的数量，最后的结果如果是1，就是符合的，如果是0了，就不不符合条件的
+	module_type （1） 代表赚金币的活动控制类型（2）代表其他免费活动的控制类型
+	t_exp_prototype 此表控制所有活动动态属性，与实际的活动逻辑无关， t_exp_task_prototype 代表活动中的逻辑动态属性，如：问卷调查，或公用的免费活动试用式的试用问卷的题目提交
+	-->
+	<select id="isExpTaskQualified"  resultType="int"  parameterType="com.suyin.expzhuan.model.ExperienceTaskOrder">
+	
+	select count(t1.d1)=0 and 
+	(select
+	 city_id=(select ifnull(city_id,-1) from t_nouser_static_prototype nsp where user_id=#{userId}) 
+	 from t_exp_task where exp_id=#{expId})
+	 from 
+	 (
+		select dictionary_id as d1 from t_exp_prototype where exp_id=#{expId} and module_type=1) t1
+		left join (select dictionary_id as d2 from t_user_prototype where user_id=#{userId}) t2
+		on t1.d1=t2.d2
+		where t2.d2 is null 
+	</select>
+	<!-- 判断一个用户是否有资格参加全面赚的活动 ,
+	逻辑是用活动属性left join 用户的属性，如果用户属性少了，那么必有t2.d2是null，那么就找t1.d1的数量，最后的结果如果是1，就是符合的，如果是0了，就不不符合条件的
+	module_type （1） 代表赚金币的活动控制类型（2）代表其他免费活动的控制类型  
+	t_exp_prototype 此表控制所有活动动态属性，与实际的活动逻辑无关， t_exp_task_prototype 代表活动中的逻辑动态属性，如：问卷调查，或公用的免费活动试用式的试用问卷的题目提交
+	-->
+	<select id="isQualified"  resultType="int"  parameterType="com.suyin.expzhuan.model.ExperienceTaskOrder">
+		 select count(t1.d1)=0 and (
+		 select
+	 city_id=(select ifnull(city_id,-1) from t_nouser_static_prototype nsp where user_id=#{userId}) 
+	 from t_experience where exp_id=#{expId}
+		 )   from (
+		select dictionary_id as d1 from t_exp_prototype where exp_id=#{expId} and module_type=2) t1
+		left join (select dictionary_id as d2 from t_user_prototype where user_id=#{userId}) t2
+		on t1.d1=t2.d2
+		where t2.d2 is null 
+	</select>
+	
+	<!-- 获取齐心赚活动的状态（开始，结束什么的） -->
+ 	<select id="getExpTaskProgress"  resultType="int" parameterType="com.suyin.expzhuan.model.ExperienceTaskOrder">
+		<![CDATA[
+		select
+			case when is_begin=1 and now()>begin_time and now()<end_time then 1
+			else 0 end	as c
+		from t_exp_task
+		where exp_id=#{expId}
+		]]>
+	</select> 
+	
+	<!-- 获取用户已经获取的金币情况和该项活动（目前只有齐心赚）的剩余金币，最大上限的情况，以便判断时候可以加上金币 -->
+	<select id="getExpAnOrderCoinStatus" resultType="hashmap" parameterType="com.suyin.expzhuan.model.ExperienceTaskOrder">
+			select eto.total_gold,et.user_browse_gold,et.user_max_gold,et.exp_count_gold,et.exp_remain_gold ,et.user_share_gold
+			,et.exp_gold_min
+			from t_exp_task_order eto
+			inner join t_exp_task et on eto.exp_id=et.exp_id
+			where eto.exp_id=#{expId} and eto.user_id=#{userId}
+	</select> 
+	<!-- 给用户加金币（目前只有齐心赚） -->
+	<update id="updateUserCoin" parameterType="hashmap">
+		update t_nouser_static_prototype set gold_coin=gold_coin+#{singleCoin} where user_id=#{userId}
+	</update>
+	<!-- 改变活动的剩余金币（目前只有齐心赚） -->
+	<update id="updateExpTaskCoin" parameterType="hashmap">
+		update t_exp_task set exp_remain_gold=exp_remain_gold-#{singleCoin} where exp_id=#{expId}
+	</update>
+	<!-- 改变该订单已获得的金币数量 （目前只有齐心赚）-->
+	<update id="updateExpTaskOrderCoin" parameterType="hashmap">
+		update t_exp_task_order set total_gold=total_gold+#{singleCoin},isShare=1  where exp_id=#{expId} and user_id=#{userId} and isShare=0
+	</update>
+	<update id="updateExpTaskOrderCoin1" parameterType="hashmap">
+		update t_exp_task_order set total_gold=total_gold+#{singleCoin},browse_count=browse_count+1,isShare=1  where exp_id=#{expId} and user_id=#{userId} 
+	</update>
+	
+	<!-- 参加全民赚活动后，要上传一个验证图片 -->
+	<update id="updateExpTaskImageUrl" parameterType="com.suyin.expzhuan.model.ExperienceTaskOrder">
+		update t_exp_task_order set image_url=#{imageUrl},user_phone=#{userPhone}  where exp_id=#{expId} and user_id=#{userId}
+	</update>
+	<!-- 全民赚上传验证图片后修改order状态为“已提交” -->
+	<update id="updateExpTaskStatus" parameterType="com.suyin.expzhuan.model.ExperienceTaskOrder">
+		update t_exp_task_order set status=1,update_time=now() where exp_id=#{expId} and user_id=#{userId}
+	</update>
+	
+	<!--保存全民赚form上传的答案 -->
+	<insert id="addExpFormAnswer" parameterType="hashmap">
+		insert into t_exp_form_answer(dictionary_id,parent_dictionary_id,text_value,user_id,exp_id,module_type,create_time,order_id)
+		<foreach collection="list" item="an" separator="union all">
+			select #{an.did},#{an.pdid},#{an.textValue},#{an.userId},#{an.expId},#{an.moduleType},now(),#{an.orderId}
+		</foreach>
+	</insert>
+	
+	<select id="findExpForm" parameterType="com.suyin.expzhuan.model.ExperienceTaskOrder" resultType="hashmap">
+		select dictionary_id as did,parentId as pdid,dictionary_name,
+		dictionary_value,dictionary_type,dictionary_code
+		from t_exp_task_dictionary where exp_id=#{expId} and module_type=1
+	</select>
+	<!-- 查询全民赚app下载图片示例及信息 -->
+	<select id="findExpZAppDownInfo" parameterType="hashmap" resultType="hashmap">
+		select
+			eto.order_id,
+			ifnull(eto.image_url,'') as image_url,
+			eto.status,
+			eto.exp_id,
+			eto.user_id,
+			et.app_info,
+			ifnull(et.down_img_url,'') as down_img_url,
+			ifnull(et.up_img_url,'') as up_img_url,
+			ifnull(et.exp_app_url,'') as exp_app_url,
+			ifnull(eto.user_phone,'') as user_phone,
+			et.is_download as is_down,
+			et.tips as tips
+		from t_exp_task_order eto
+		inner join t_exp_task et on eto.exp_id=et.exp_id
+		where eto.exp_id=#{expId} and eto.user_id=#{userId}
+	</select>
+	
+	<select id="findExpZAppOrder" parameterType="hashmap" resultType="hashmap">
+		select
+		eto.order_id,
+		eto.image_url,
+		eto.status,
+		et.*
+		from t_exp_task_order eto
+		inner join t_exp_task et on eto.exp_id=et.exp_id
+		where eto.exp_id=#{expId} and user_id=#{userId}
+	</select>
+	<select id="getExpFormAnswer" parameterType="hashmap" resultType="hashmap">
+		select etd.dictionary_type, efn.* from t_exp_form_answer efn
+		inner join t_exp_task_dictionary etd on efn.dictionary_id=etd.dictionary_id
+		where efn.exp_id=#{expId} and efn.user_id=#{userId} and order_id=#{orderId}
+		and efn.module_type=1
+	</select>
+	
+	<select id="findQixinZhuanODetail" resultType="hashmap" parameterType="int">
+		select et.*,eto.browse_count as browse_count1,eto.total_gold as total_gold1 from t_exp_task_order eto 
+		inner join t_exp_task et on eto.exp_id=et.exp_id
+		where eto.order_id=#{orderId}
+	</select>	
+</mapper>	

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suyin.find.mapper.FindMapper">
+	<select id="findThemeOrDiscountByPage" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[ 
+		select image,type,date_format(begin,'%y-%m-%d') as beginDate
+		,date_format(end,'%y-%m-%d') as endDate,title,url ,
+		now() > end isover , now() > begin isstart , begin < now() isload 
+		from t_theme where type=#{type}
+		order by isover , isstart desc , begin desc 
+		]]>
+	</select>
+	
+	
+	
+</mapper>	

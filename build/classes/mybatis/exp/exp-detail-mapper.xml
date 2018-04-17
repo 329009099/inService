@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suyin.exp.mapper.ExpDetailMapper">
+	<!--Map 映射类 -->
+	<resultMap type="com.suyin.exp.model.ExpDetail" id="ExpDetailMap">
+	
+		<result column="exp_detail_id" property="expDetailId"/>
+		<result column="member_id" property="memberId"/>
+		<result column="exp_id" property="expId"/>
+		<result column="pro_id" property="proId"/>
+		<result column="exp_num" property="expNum"/>
+		<result column="pro_num" property="proNum"/>
+		<result column="integral" property="integral"/>
+		<result column="validity" property="validity"/>
+		<result column="add_day" property="addDay"/>
+		<result column="seq_no" property="seqNo"/>
+		<result column="create_time" property="createTime"/>
+		<result column="update_time" property="updateTime"/>
+		<result column="member_name" property="busname"/>
+		<result column="pro_name" property="proname"/>
+	</resultMap>
+		
+	<insert id="involVedTryaddInfo" parameterType="java.util.HashMap">
+		<![CDATA[ 
+		insert into t_exp_form_answer
+		(
+		dictionary_id,
+		parent_dictionary_id,
+		text_value,
+		user_id,
+		exp_id,
+		module_type,
+		create_time,
+		order_id,
+		is_selected
+		)
+		values
+		(#{dId}, #{pId}, #{value}, #{userId}, #{expId}, #{moduleType}, now(), #{orderId}, #{isSelected})
+		]]>
+	</insert>
+	<!-- 查询活动对应活动所选项 -->
+	<select id="findExpZhuanPrototypeOption" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		<![CDATA[
+		select
+		s.dictionary_name,
+		s.dictionary_value,
+		s.dictionary_id,
+		s.parentId,
+		d.text_value,
+		ifnull(d.is_selected, 0) as selected
+		from
+		t_exp_task_dictionary s
+		left join (
+		select
+			*
+		from
+			t_exp_form_answer
+		where
+		 exp_id = #{expId} and module_type=#{moduleType} and user_id=#{userId}
+		and dictionary_id in (
+			select
+				dictionary_id
+			from
+				t_exp_task_dictionary
+			where
+				parentid = #{dictionary_id}
+			)
+		) d on s.dictionary_id = d.dictionary_id
+		where
+		s.parentid = #{dictionary_id}
+		]]>
+
+	</select>
+	<!-- 试用式活动当活动id对应的所有问卷调查动态属性 -->
+	<select id="findExpZhuanPrototype" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+		<![CDATA[
+		select
+		t.dictionary_id,
+		t.dictionary_name,
+		t.dictionary_type
+		from
+		t_exp_task_dictionary t
+		where
+		t.parentId = 0
+		and t.module_type = #{moduleType}
+		and t.exp_id=#{expId}
+		]]>
+	</select>
+	<!-- 获取首次分享者分享信息 -->
+	<select id="findExpShareInfo"  parameterType="java.util.HashMap" resultType="java.util.HashMap">
+	<![CDATA[
+	select
+		b.detail_id,
+		b.exp_id,
+		b.exp_type,
+		b.share_num,
+		b.user_id,
+		b.share_id,
+		b.create_time
+	from
+	t_exp_share b
+	where 
+	b.user_id=#{userId}
+	and 
+	b.detail_id=#{detailId}
+  	and 
+	(select d.begin_time from t_exp_time d where d.exp_time_id=#{expTimeId} and b.create_time between d.begin_time and d.end_time)
+	]]>
+	</select>
+	<!-- 根据 用户Id及openId查询当前时间段内是否已经-->
+	<select id="findExpTimeSharDetail" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+	<![CDATA[	
+	select
+		a.open_id,
+		b.detail_id,
+		b.exp_id,
+		b.exp_type,
+		b.share_num,
+		b.user_id
+	from
+		t_exp_share_detail a
+	join t_exp_share b on b.share_id = a.share_id
+	where 
+	b.user_id=#{userId}
+	and 
+	a.open_id=#{openId}
+	and 
+	(select d.begin_time from t_exp_time d where d.exp_time_id=#{expTimeId} and a.create_time between d.begin_time and d.end_time)
+	]]>
+	
+	</select>
+	<!-- 根据时间段id查询活动是否在该时间段内 -->
+	<select id="findExpTimeStauts" parameterType="java.util.HashMap" resultType="java.lang.String">
+		<![CDATA[		
+		select  
+			case 
+				when  now() 
+				between t.begin_time  and t.end_time then 1
+				when now()<t.begin_time then 2
+				when now()>t.end_time  then 3
+				end as 'stauts'		
+		from 
+		t_exp_time t 
+		where t.exp_time_id=#{expTimeId}
+		]]>
+	</select>
+	<!-- 更新时间段表中的ExpNum数量 -->
+	<update id="updateTimeExpNum" parameterType="java.util.HashMap">
+	<![CDATA[
+		update t_exp_time t set t.exp_num=(ifnull(t.exp_num,0)+1) where t.exp_time_id=#{expTimeId}
+	]]>
+	</update>
+	<!--更新活动详情参与人数  -->
+	<update id="updateExpDetailExpNum" parameterType="java.lang.String">
+	<![CDATA[
+		update t_exp_detail t set t.exp_num=(ifnull(t.exp_num,0)+1) where t.exp_detail_id=#{expDetailId}
+	]]>
+	</update>
+	<!-- 查询当前时间段内的数量是否满足 -->
+	<select id="findExpIsProNum" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+	<![CDATA[
+		select
+			b.pro_num,
+			IFNULL(b.add_day,0) as add_day,
+			b.validity,
+			b.integral,
+			c.exp_num,
+			c.exp_time_id,
+			tpr.pro_name,
+			c.exp_id
+			from
+			 t_exp_detail b 
+			join (select	t.exp_id,t.begin_time,t.end_time,t.exp_num,t.exp_time_id from t_exp_time t where 	now() between t.begin_time and  t.end_time) c on c.exp_id=b.exp_id
+			join t_product tpr on tpr.pro_id=b.pro_id
+		where
+			  b.exp_detail_id=#{detailId}
+	
+	]]>
+	</select>
+	
+	<!-- 查询用户是否参与活动，是否已发券 用户参与活动信息 验证 -->
+	<select id="findIsUserExpStauts" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		<![CDATA[
+		select
+			a.voucher_status,
+			a.exp_type,
+			a.is_discuss,
+			a.member_id,
+			a.order_id,
+			a.user_id,
+			a.detail_id,
+			a.exp_id
+		from
+			t_exp_order a
+		where
+			 a.detail_id=#{detailId}
+			 and 
+			 a.user_id=#{userId}
+		]]>
+	</select>
+	
+	<!-- 根据详情id查询产品图片 -->
+	<select id="findExpDetailImage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		<![CDATA[		
+		select
+		a.attachment_id,
+		a.file_name,
+		a.display_path
+		from t_attachment a 
+		where a.entity=	(
+			select tp.pro_id from t_product tp 
+			join t_exp_detail de on tp.pro_id=de.pro_id
+			where de.exp_detail_id=#{detailId}
+		)
+		and a.entity_attribute='pro'		
+		order by a.file_size asc
+		]]>
+	</select>
+
+	<!-- 根据活动详情id查询对应信息-->
+	<select id="findExpDetailById" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+	   <![CDATA[
+		select
+			tme.busname,
+			tme.logo_pic_url,
+			tme.member_id,
+			tme.address,
+			tme.address_url,
+			tme.telephone,
+			tex.title,
+			tex.exp_id,
+			tex.exp_type,
+			tex.show_type,
+			tex.installments,
+			detail.exp_detail_id,
+			detail.pro_num,
+			detail.integral,
+			detail.pro_id,
+			IFNULL(et.exp_num,0) as exp_num,
+			detail.exp_num as exp_num1,
+			pro.price,
+			pro.pro_name,
+			pro.activity_info,
+			pro.pro_info,
+			pro.use_info,
+			IFNULL(pro.pro_img,'') as pro_img,
+			pro.title as proTitle,
+			case 
+					when  now() 
+					between tex.begin_time  and tex.end_time then 1
+					when now()<tex.begin_time then 2
+					when now()>tex.end_time  then 3
+					end as 'exp_stauts',
+			IFNULL(case when (TIMESTAMPDIFF(HOUR, now(),et.end_time) +1)>=24 then floor((TIMESTAMPDIFF(HOUR, now(),et.end_time)+1)/24)
+		                         else   TIMESTAMPDIFF(HOUR, now(),et.end_time) +1 end,0)  time,
+			case when (TIMESTAMPDIFF(HOUR, now(),et.end_time) +1)>=24 then convert('天',char)else  convert('小时',char) end  unit,
+			IFNULL(et.exp_time_id,0) as exp_time_id,			
+			date_format(tex.begin_time,'%m-%d %H:%i') as begin_time
+		from
+			t_exp_detail detail
+		join t_experience tex on tex.exp_id = detail.exp_id
+		join t_product pro on pro.pro_id = detail.pro_id
+		join t_member tme on tme.member_id = detail.member_id
+		left join t_exp_time et on et.exp_id=detail.exp_id and now() between et.begin_time and et.end_time
+		where
+			detail.exp_detail_id =#{detailId}
+		]]>
+	</select>
+	<!-- 人气进程详情数据查询 -->
+	<select id="findExpDetailRank"  parameterType="java.util.HashMap" resultType="java.util.HashMap">
+	<![CDATA[
+	select
+			tme.busname,
+			tme.logo_pic_url,
+			tme.member_id,
+			tme.address,
+			tme.address_url,
+			tme.telephone,
+			tex.title,
+			tex.exp_id,
+			tex.exp_type,
+			tex.show_type,
+			tex.installments,
+			detail.exp_detail_id,
+			detail.pro_num,
+			detail.integral,
+			IFNULL(et.exp_num,0) as exp_num,
+			detail.exp_num as exp_num1,
+			pro.price,
+			pro.pro_name,
+			pro.activity_info,
+			pro.pro_info,
+			pro.use_info,
+			IFNULL(pro.pro_img,'') as pro_img,
+			pro.title as proTitle,
+			case 
+					when  now() 
+					between tex.begin_time  and tex.end_time then 1
+					when now()<tex.begin_time then 2
+					when now()>tex.end_time  then 3
+					end as 'exp_stauts',
+			IFNULL(case when (TIMESTAMPDIFF(HOUR, now(),et.end_time) +1)>=24 then floor((TIMESTAMPDIFF(HOUR, now(),et.end_time)+1)/24)
+		                         else   TIMESTAMPDIFF(HOUR, now(),et.end_time) +1 end,0)  time,
+			case when (TIMESTAMPDIFF(HOUR, now(),et.end_time) +1)>=24 then convert('天',char)else  convert('小时',char) end  unit,
+			IFNULL(et.exp_time_id,0) as exp_time_id
+		from
+			t_exp_detail detail
+		join t_experience tex on tex.exp_id = detail.exp_id
+		join t_product pro on pro.pro_id = detail.pro_id
+		join t_member tme on tme.member_id = detail.member_id
+		left join t_exp_time et on et.exp_id=detail.exp_id and et.exp_time_id=(select  st.exp_time_id from t_exp_share st where st.detail_id=#{detailId} order by st.create_time desc limit 1)
+		where
+			detail.exp_detail_id =#{detailId}
+
+		]]>
+	</select>
+	
+</mapper>	

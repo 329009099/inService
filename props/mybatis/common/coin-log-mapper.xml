@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suyin.common.mapper.CoinLogMapper">
+	<!-- 关于两个赚的活动消息,提供userId和expId, pattern-->
+	<insert id="addCoinLog" parameterType="com.suyin.common.model.CoinLog">
+		insert into t_nouser_coin_log(user_id,content,gold_coin,direction,create_time,status,coinTellerId)
+		values(#{userId},#{content},#{goldCoin},#{direction},now(),#{status},#{coinTellerId})
+	</insert>
+	
+	<select id="findCoinLogByUserByPage" resultType="com.suyin.common.model.CoinLog" parameterType="com.suyin.common.model.CoinLog">
+		select log_id as logId,user_id as userId,content,gold_coin as goldCoin,direction,
+		date_format(create_time,'%Y-%m-%d %H:%i:%S') as createTime,status
+		from t_nouser_coin_log where user_id=#{userId}
+		order by create_time desc
+	</select>	
+	<select id="findCashLogByUserByPage" resultType="com.suyin.common.model.CashLog" parameterType="com.suyin.common.model.CashLog">
+		select log_id as logId,user_id as userId,content,money as money,direction,
+		date_format(create_time,'%Y-%m-%d %H:%i:%S') as createTime,status
+		from t_nouser_cash_log where user_id=#{userId}
+		order by create_time desc
+	</select>	
+
+	<!-- 用户提取金币的申请记录 -->
+	<insert id="addCoinTeller" parameterType="com.suyin.common.model.CoinTeller" useGeneratedKeys="true" keyProperty="logId"> 
+		insert into t_nouser_coin_teller(user_id,coin,status,create_time,money)
+		values(#{userId},#{goldCoin},#{status},now(),#{money})
+	</insert>
+
+	<!-- 用户金币转钱包申请记录 -->
+	<insert id="addCashLog" parameterType="com.suyin.common.model.CashLog"> 
+		insert into t_nouser_cash_log(user_id,content,status,create_time,money,direction)
+		values(#{userId},#{content},#{status},now(),#{money},#{direction})
+	</insert>
+</mapper>

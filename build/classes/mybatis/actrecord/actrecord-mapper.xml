@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suyin.actrecord.mapper.ActRecordMapper">
+
+	<resultMap type="com.suyin.actrecord.model.ActRecord" id="ActRecordMap">
+		<result column="id" property="id"/>
+		<result column="openid" property="openid"/>
+		<result column="act_id" property="actId"/>
+		<result column="record_time" property="recordTime"/>
+		<result column="part_id" property="partId"/>
+		<result column="carete_time" property="careteTime"/>
+		<result column="is_cord" property="isCord"/>
+	</resultMap>
+	
+	<!-- 信息插入 -->
+	<insert id="insertJoinAct" parameterType="com.suyin.actrecord.model.ActRecord" useGeneratedKeys="true" keyProperty="id">
+	<![CDATA[
+
+		insert  t_act_record (
+				openid,		
+				act_id,		
+				record_time,		
+				part_id,		
+				carete_time,		
+				is_cord	
+		)
+		values(
+				#{openid},
+				#{actId},
+				 now(),
+				#{partId},
+				now(),
+				#{isCord}
+		)
+		]]>
+	</insert>
+	
+	<!-- 根据id查询当前是否可以参与投票-->
+	<select id="findIsActRecord" parameterType="java.util.HashMap" resultMap="ActRecordMap">
+		<![CDATA[
+		SELECT
+		 *
+		FROM
+			t_act_record t
+		WHERE
+			1 = 1
+		AND 
+		(t.record_time > DATE_FORMAT(now(), '%Y-%m-%d 00:00:00') and t.record_time < DATE_FORMAT(now(), '%Y-%m-%d 23:59:59'))
+		AND
+		t.part_id=#{partId}
+	 	 AND
+    	t.openid = #{openId}
+		]]>
+	</select>
+	
+	<select id="findActstate" parameterType="java.lang.String"  resultType="java.lang.String">
+		<![CDATA[
+		SELECT
+			CASE 
+			WHEN NOW()>t.begin_time && NOW()< t.end_time THEN '0' 
+			WHEN NOW()<t.begin_time THEN '1' 
+			WHEN NOW()>t.end_time THEN '2' 
+			ELSE '9' 
+			END AS  state
+		FROM
+			t_activity t
+		WHERE t.id=113
+			LIMIT 1 		
+		]]>
+	</select>
+
+	
+</mapper>	

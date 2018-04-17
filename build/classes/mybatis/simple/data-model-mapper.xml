@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suyin.simple.mapper.SyncDataMapper">
+	
+	<select  id="findOldUserByAll"   resultType="java.util.HashMap">
+		select   
+		sd_sy_user.user_id,sd_sy_user.point,sd_sy_user.tel  
+		from sd_sy_user
+	</select>
+	
+	<insert id="addNouser" parameterType="com.suyin.simple.model.DataModel" useGeneratedKeys="true" keyProperty="id">
+		insert into t_nouser (
+				user_phone,		
+				user_password,		
+				user_state,		
+				create_time,		
+				update_time		
+		)
+		values(
+				#{userPhone},
+				null,
+				0,
+				now(),
+				now()
+		)
+	</insert>
+	
+	
+	<insert id="addNouserStaticPrototype" parameterType="com.suyin.simple.model.DataModel" useGeneratedKeys="true" keyProperty="id">
+		insert into t_nouser_static_prototype(
+				user_id,		
+				gold_coin,		
+				create_time	
+		)
+		values(
+				#{id},
+				#{coin},
+				now()
+		)
+	</insert>
+	
+</mapper>	

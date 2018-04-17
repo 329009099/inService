@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suyin.thememonth.mapper.ThemeMonthMapper">
+
+	<resultMap type="com.suyin.thememonth.model.ThemeMonth" id="ThemeMonthMap">
+	
+		<result column="theme_id" property="themeId"/>
+		<result column="theme_title" property="themeTitle"/>
+		<result column="theme_logo" property="themeLogo"/>
+		<result column="theme_pic" property="themePic"/>
+		<result column="bottom_pic" property="bottomPic"/>
+		<result column="create_time" property="createTime"/>
+		<result column="update_time" property="updateTime"/>
+		<result column="color" property="color"/>
+		<result column="month" property="month"/>
+	
+	</resultMap>
+	
+	<!-- 查询主题月信息列表 -->
+	<select id="findThemeMonth" parameterType="java.util.HashMap"  resultType="java.util.HashMap">
+	   <![CDATA[
+		select
+	 		theme_id,
+	 		theme_title,
+	 		theme_logo,
+	 		theme_pic,
+	 		color,
+	 		months,
+	 		bottom_pic
+	 	from
+	 		t_theme_month
+	 	where
+	 		DATE_FORMAT(now(),'%y%m') = DATE_FORMAT(months,'%y%m')
+	 	limit 1
+		]]>
+	</select>
+	
+</mapper>	

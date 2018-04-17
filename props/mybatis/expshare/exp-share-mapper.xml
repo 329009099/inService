@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suyin.expshare.mapper.ExpShareMapper">
+
+	<resultMap type="com.suyin.expshare.model.ExpShare" id="ExpShareMap">
+	
+		<result column="share_id" property="shareId"/>
+		<result column="detail_id" property="detailId"/>
+		<result column="user_id" property="userId"/>
+		<result column="open_id" property="openId"/>
+		<result column="exp_type" property="expType"/>
+		<result column="exp_id" property="expId"/>
+		<result column="share_num" property="shareNum"/>
+		<result column="create_time" property="createTime"/>
+		<result column="update_time" property="updateTime"/>
+	
+	</resultMap>
+	<!-- 修改分享人气数 -->
+	<update id="updateExpShare" parameterType="com.suyin.expshare.model.ExpShare" >
+	<![CDATA[
+	 update t_exp_share set share_num=(share_num+#{shareNum}) where share_id=#{shareId}
+	]]>
+	</update>
+	<!--用户参与人气式活动时，记录分享的详情信息-->
+	<insert id="addExpShare" parameterType="com.suyin.expshare.model.ExpShare" useGeneratedKeys="true" keyProperty="shareId">
+	<![CDATA[
+		insert  t_exp_share (
+				detail_id,		
+				user_id,		
+				open_id,		
+				exp_type,		
+				exp_id,
+				share_num,
+				create_time,		
+				update_time,
+				exp_time_id
+		)
+		values(
+				#{detailId},
+				#{userId},
+				#{openId},
+				#{expType},
+				#{expId},
+				#{shareNum},
+				now(),
+			    now(),
+			    #{expTimeId}
+		)
+		]]>
+	</insert>
+	<!-- 获取人气式的排名 -->
+	<select id="findRankForShareByPage" parameterType="hashmap" resultType="hashmap"> 
+	select * from (
+		select fuck1.*, @rank:=@rank+1 as rank from (
+		select n.user_id,n.user_phone,ifnull(nsp.head_image_url,'') as head_image_url,fuck.share_num from t_nouser n
+		inner join (
+		select es1.user_id,es1.share_num from t_exp_share es1 where es1.detail_id=#{detailId} 
+		and es1.exp_time_id=(select exp_time_id from t_exp_share where detail_id=#{detailId} and user_id=#{userId} order by create_time desc limit 1)
+		) fuck
+		on n.user_id=fuck.user_id
+		inner join t_nouser_static_prototype nsp on n.user_id=nsp.user_id order by fuck.share_num desc,n.user_id asc
+		) fuck1,(select @rank:=0) fuck2 ) kkk
+	</select>
+	
+	<!--获取人气式的排名  假数据混合 -->
+	<select id="findFalseRankForShareByPage" parameterType="hashmap" resultType="hashmap">
+		select *from(
+			select dd.*,@rank:=@rank+1 as rank from(
+				select *from(
+				select n.user_id,n.user_phone,ifnull(nsp.head_image_url,'') as head_image_url,fuck.share_num from t_nouser n
+				inner join (
+				select es1.user_id,es1.share_num from t_exp_share es1 where es1.detail_id=#{detailId}  
+				and es1.exp_time_id=(select exp_time_id from t_exp_share where detail_id=#{detailId}  and user_id=#{userId} order by create_time desc limit 1)
+				) fuck
+				on n.user_id=fuck.user_id
+				inner join t_nouser_static_prototype nsp on n.user_id=nsp.user_id 
+	
+				UNION ALL
+				select fn.user_id,fn.user_phone,ifnull(fn.head_url,'') as head_image_url,fes1.share_num from t_false_nouser fn 
+				inner join 
+				 t_false_exp_order fes1 on fes1.user_id=fn.user_id
+				where fes1.exp_time_id=(select exp_time_id from t_exp_share where detail_id=#{detailId}  and user_id=#{userId} order by create_time desc limit 1)
+			) ss order by ss.share_num desc,ss.user_id asc
+		) dd,(select @rank:=0) fuck2 ) kkk 
+	</select>
+	
+	<!-- 查询我的排名 -->
+	<select id="findRankForMySelf" parameterType="hashmap" resultType="hashmap">
+		select kk.*,eo.status from (
+			select fuck1.*, @rank:=@rank+1 as rank from (
+			select n.user_id,n.user_phone,ifnull(nsp.head_image_url,'') as head_image_url,fuck.share_num,fuck.detail_id from t_nouser n
+			inner join (
+			select es1.user_id,es1.share_num, es1.detail_id from t_exp_share es1 where es1.detail_id=#{detailId}  
+			and es1.exp_time_id=(select exp_time_id from t_exp_share where detail_id=#{detailId}  and user_id=#{userId} order by create_time desc limit 1)
+			) fuck
+			on n.user_id=fuck.user_id
+			inner join t_nouser_static_prototype nsp on n.user_id=nsp.user_id 
+			
+			order by fuck.share_num desc,n.user_id asc
+			) fuck1,(select @rank:=0) fuck2
+			) kk
+	inner join t_exp_order eo on kk.detail_id=eo.detail_id and kk.user_id=eo.user_id
+	where kk.user_id=#{userId}
+	</select>
+		
+	<!-- 查询我的排名_假数据 -->
+	<select id="findFalseRankForMySelf" parameterType="hashmap" resultType="hashmap">
+	select kk.* from (
+			select fuck1.*, @rank:=@rank+1 as rank from (
+				select *from(
+					select n.user_id,n.user_phone,ifnull(nsp.head_image_url,'') as head_image_url,fuck.share_num,fuck.detail_id,txo.`status` from t_nouser n
+					inner join (
+					select es1.user_id,es1.share_num, es1.detail_id from t_exp_share es1 where es1.detail_id=#{detailId} 
+					and es1.exp_time_id=(select exp_time_id from t_exp_share where detail_id=#{detailId}  and user_id=#{userId} order by create_time desc limit 1)
+					) fuck
+					on n.user_id=fuck.user_id
+					inner join t_nouser_static_prototype nsp on n.user_id=nsp.user_id 
+					inner join t_exp_order txo on txo.detail_id=#{detailId} and txo.user_id=#{userId}
+
+					UNION ALL
+						select fn.user_id,fn.user_phone,ifnull(fn.head_url,'') as head_image_url,fes1.share_num,'' as detail_id,fes1.pop_status as status from t_false_nouser fn 
+						inner join 
+						 t_false_exp_order fes1 on fes1.user_id=fn.user_id
+						where fes1.share_time_id=(select exp_time_id from t_exp_share where detail_id=#{detailId} and user_id=#{userId} order by create_time desc limit 1)
+					
+				) bh	order by bh.share_num desc,bh.user_id asc
+			) fuck1,(select @rank:=0) fuck2
+		) kk where kk.user_id=#{userId}
+	</select>
+</mapper>	

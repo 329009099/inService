@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suyin.nouser.mapper.NouserDiscuzMapper">
+
+	<resultMap type="com.suyin.nouser.model.NouserDiscuz" id="NouserDiscuzMap">
+	
+		<result column="discuss_id" property="discussId"/>
+		<result column="pro_id" property="proId"/>
+		<result column="detail_id" property="detailId"/>
+		<result column="member_id" property="memberId"/>
+		<result column="parent_id" property="parentId"/>
+		<result column="user_id" property="userId"/>
+		<result column="exp_type" property="expType"/>
+		<result column="content" property="content"/>
+		<result column="reply" property="reply"/>
+		<result column="is_reply" property="isReply"/>
+		<result column="pic_url" property="picUrl"/>
+		<result column="is_perf" property="isPerf"/>
+		<result column="qcd_score" property="qcdScore"/>
+		<result column="create_time" property="createTime"/>
+		<result column="update_time" property="updateTime"/>
+		<result column="userPhone" property="userPhone"/>
+	
+	</resultMap>
+	
+	<!-- 添加评论  -->
+	<insert id="addNouserDiscuz" parameterType="com.suyin.nouser.model.NouserDiscuz">
+		<![CDATA[ 
+		insert into  t_discuss (
+				pro_id,
+				detail_id,	
+				member_id,
+				parent_id,
+				user_id,
+				exp_type,
+				content,
+				reply,
+				is_reply,
+				pic_url,
+				is_perf,
+				qcd_score,
+				create_time,
+				update_time	
+		)
+		values(
+				#{proId},
+				#{detailId},	
+				#{memberId},
+				#{parentId},
+				#{userId},
+				#{expType},
+				#{content},
+				#{reply},
+				#{isReply},
+				#{picUrl},
+				#{isPerf},
+				#{qcdScore},
+				now(),
+				now()
+		)
+		]]>
+	</insert>
+
+	<!-- 根据产品id和活动id查询商户评论信息总行数 -->
+	<select id="findDiscussCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+		<![CDATA[
+			SELECT COUNT(1) FROM  t_discuss WHERE pro_id=#{proId} AND detail_id=#{detailId};
+		]]>
+	</select>
+	
+	<!-- 根据产品id和活动id查询商户评论信息列表 -->
+	<select id="findDiscussByPage" parameterType="hashmap" resultMap="NouserDiscuzMap">
+		<![CDATA[
+			SELECT 	t.content,LEFT(t.qcd_score,1) as qcd_score,left(t.create_time,19) as create_time,t.pic_url,
+				CONCAT(LEFT(n.user_phone,3),"****",RIGHT(n.user_phone,4))  userPhone
+ 			FROM t_discuss t LEFT JOIN t_nouser n ON t.user_id=n.user_id 
+	 		where t.pro_id=#{proId} and t.detail_id=#{detailId} 
+	 			order by t.create_time desc
+		]]>
+	</select>
+	
+		<select id="findDiscussA" parameterType="com.suyin.nouser.model.NouserDiscuz" resultType="hashmap">
+		<![CDATA[
+			SELECT 	t.content,LEFT(t.qcd_score,1) as qcd_score,left(t.create_time,19) as create_time,t.pic_url,
+				CONCAT(LEFT(n.user_phone,3),"****",RIGHT(n.user_phone,4))  userPhone
+ 			FROM t_discuss t LEFT JOIN t_nouser n ON t.user_id=n.user_id 
+	 		where t.pro_id=#{proId} and t.detail_id=#{detailId} 
+	 			order by t.create_time desc
+
+		]]>
+	</select>
+	
+	<!-- 评价完修改评价状态 -->
+	<update id="updateDiscussStatus" parameterType="com.suyin.nouser.model.NouserDiscuz">
+		update t_exp_order set is_discuss=1 where detail_id=#{detailId}  and user_id=#{userId}
+	</update>
+	
+	<!-- 查询该用户是否评价过 -->
+	<select id="queryDisUser" parameterType="com.suyin.nouser.model.NouserDiscuz" resultType="java.lang.Integer">
+		select count(1) from t_discuss where user_id=#{userId} and detail_id=#{detailId}
+	</select>
+</mapper>	

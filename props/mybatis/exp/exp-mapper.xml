@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suyin.exp.mapper.ExperienceMapper">
+	<resultMap type="com.suyin.exp.model.Experience" id="ExperienceMap">
+		<result column="exp_id" property="expId"/>
+		<result column="member_id" property="memberId"/>
+		<result column="title" property="title"/>
+		<result column="type" property="type"/>
+		<result column="exp_type" property="expType"/>
+		<result column="is_begin" property="isBegin"/>
+		<result column="probability" property="probability"/>
+		<result column="begin_time" property="beginTime"/>
+		<result column="end_time" property="endTime"/>
+		<result column="unit_day" property="unitDay"/>
+		<result column="show_type" property="showType"/>
+		<result column="add_order_num" property="addOrderNum"/>
+		<result column="info" property="info"/>
+		<result column="provin_id" property="provinId"/>
+		<result column="city_id" property="cityId"/>
+		<result column="create_time" property="createTime"/>
+		<result column="update_time" property="updateTime"/>
+		<result column="installments" property="installments"/> 
+	</resultMap>
+	
+	<select id="findExperienceByTypeByPage"  resultType="java.util.HashMap" parameterType="com.suyin.exp.model.Experience">
+	<![CDATA[
+		select 
+				t.busname,
+				t.begin_time,
+				t.member_id,
+				t.title,
+				t.proTitle,
+				t.exp_id,
+				t.is_begin,
+				t.exp_img_url,
+				t.exp_detail_id,
+				t.pro_num,
+				t.integral,
+				t.exp_num,
+				t.price,
+				t.pro_name,
+				t.region_name,
+				t.cg_name,
+				t.exp_stauts,
+				t.exp_type,
+				t.seq_num,
+				t.is_label,
+				t.label,
+				t.installments
+		from(
+			select
+						tme.busname,
+						tme.member_id,
+						tex.title,
+						tex.exp_id,
+						tex.begin_time,
+						tex.exp_type,
+						tex.seq_num,
+						tex.is_label,
+						tex.label,
+						IFNULL(tex.exp_img_url,'') as exp_img_url,
+						tex.is_begin,
+						detail.exp_detail_id,
+						detail.pro_num,
+						detail.integral,
+						IFNULL(detail.exp_num,0) as exp_num,
+						pro.price,
+						pro.pro_name,
+						pro.title as 'proTitle',
+						reg.region_name,
+						cate.cg_name,
+						tex.installments,
+						case 
+						when  now() 
+						between tex.begin_time  and tex.end_time then 1
+						when now()<tex.begin_time then 2
+						when now()>tex.end_time  then 3
+						end as 'exp_stauts'
+					from
+						t_exp_detail detail
+						join t_experience tex on tex.exp_id = detail.exp_id						
+						join t_product pro on pro.pro_id = detail.pro_id
+						join t_member tme on tme.member_id = detail.member_id
+						join t_region reg on reg.region_id = tme.region_id
+						join t_category cate on cate.cg_id = tme.cg_id
+					where
+						find_in_set(#{regType},tex.client_type)>0
+						and
+						tex.exp_type =#{expType}
+						and
+						tex.city_id =#{cityId}
+						and
+						tex.is_begin=1
+						
+		)t order by 
+						 t.exp_stauts asc,
+						 t.seq_num desc,
+						 t.begin_time desc
+			]]>
+	</select>
+	<!-- map 方式 -->
+	<select id="findExperienceByTypeByPageMap"  resultType="java.util.HashMap" parameterType="java.util.HashMap">
+	<![CDATA[
+		select 
+				t.busname,
+				t.begin_time,
+				t.member_id,
+				t.title,
+				t.proTitle,
+				t.exp_id,
+				t.is_begin,
+				t.exp_img_url,
+				t.exp_detail_id,
+				t.pro_num,
+				t.integral,
+				t.exp_num,
+				t.price,
+				t.pro_name,
+				t.region_name,
+				t.cg_name,
+				t.exp_stauts,
+				t.exp_type,
+				t.seq_num,
+				t.is_label,
+				t.label,
+				t.installments
+		from(
+			select
+						tme.busname,
+						tme.member_id,
+						tex.title,
+						tex.exp_id,
+						tex.begin_time,
+						IFNULL(tex.exp_img_url,'') as exp_img_url,
+						tex.is_begin,
+						tex.exp_type,
+						tex.seq_num,
+						tex.is_label,
+						tex.label,
+						detail.exp_detail_id,
+						detail.pro_num,
+						IFNULL(detail.exp_num,0) as exp_num,
+						detail.integral,
+						pro.price,
+						pro.pro_name,
+						pro.title as 'proTitle',
+						reg.region_name,
+						cate.cg_name,
+						tex.installments,
+						case 
+						when  now() 
+						between tex.begin_time  and tex.end_time then 1
+						when now()<tex.begin_time then 2
+						when now()>tex.end_time  then 3
+						end as 'exp_stauts'
+					from
+						t_exp_detail detail
+						join t_experience tex on tex.exp_id = detail.exp_id
+						join t_product pro on pro.pro_id = detail.pro_id            
+						join t_member tme on tme.member_id = detail.member_id
+						join t_region reg on reg.region_id = tme.region_id
+						join t_category cate on cate.cg_id = tme.cg_id
+					where
+						tex.exp_type = #{expType}
+						and
+						tex.city_id = #{cityId}
+						and
+						tex.is_begin=1
+						and
+						find_in_set(#{regType},tex.client_type)>0
+		)t order by 
+						 t.exp_stauts asc,
+						 t.seq_num desc,
+						 t.begin_time desc
+			]]>
+	</select>
+
+	<select id="findExpById" resultMap="ExperienceMap" parameterType="com.suyin.exp.model.Experience">
+		select * from t_experience where exp_id=#{expId}
+	</select>
+	
+</mapper>	

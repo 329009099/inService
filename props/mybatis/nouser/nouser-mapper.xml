@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suyin.nouser.mapper.NouserMapper">
+
+	<resultMap type="com.suyin.nouser.model.Nouser" id="NouserMap">
+	
+		<result column="user_id" property="userId"/>
+		<result column="openid" property="openid"/>
+		<result column="user_phone" property="userPhone"/>
+		<result column="user_password" property="userPassword"/>
+		<result column="user_state" property="userState"/>
+		<result column="create_time" property="createTime"/>
+		<result column="update_time" property="updateTime"/>
+	
+	</resultMap>
+	
+	<!-- NO团推广活动新用户红包处理部分start -->
+	
+	<!-- 保存记录红包金钱得到记录 -->
+	<insert id="addCashLog" parameterType="hashmap" >
+	<![CDATA[
+		insert into t_nouser_cash_log
+		(
+			user_id,
+			money,
+			direction,
+			create_time,
+			update_time,
+			content,
+			teller_id,
+			status
+		)
+		values
+		(
+			#{userId},
+			#{money},
+			#{direction},
+			now(),
+			now(),
+			#{content},
+			#{coinTellerId},
+			#{log_status}
+		)
+		]]>
+	</insert>
+	
+	<!-- 根据查询该用户在参加红包活动，的红包金额一 -->
+	<select id="findUserInfo" parameterType="hashmap" resultType="hashmap">
+	<![CDATA[
+	select
+		 t.tg_exp_id,
+		 t.tg_id,
+		 t.tg_img,
+		 t.tg_nickname,
+		 t.tg_price,
+		 t.tg_iphone,
+		 t.tg_type
+		from
+			tg_exp_order t
+		where
+			t.tg_iphone =#{phone}
+	]]>
+	
+	</select>
+	
+	<select id="findUserInfoList"  parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+		select
+			 t.tg_exp_id,
+			 t.tg_id,
+			 t.tg_img,
+			 t.tg_nickname,
+			 t.tg_price,
+			 t.tg_iphone,
+			 t.tg_type
+			from
+				tg_exp_order t
+			where
+				t.tg_iphone =#{phone}
+		]]>
+	
+	</select>
+	<!-- 获取用户信息 -->
+	<select id="findNoUser" parameterType="hashmap" resultType="hashmap">
+	<![CDATA[	
+	select
+		a.user_id,
+		b.user_phone,
+		a.money
+	from
+		t_nouser_static_prototype a
+	join t_nouser b on b.user_id = a.user_id
+	where
+		b.user_phone = #{phone}
+	
+	]]>		
+	</select>
+	
+	<!-- 同步至NO团用户钱包 -->
+	<update id="updateNoUserMoney" parameterType="hashmap">
+	<![CDATA[
+	update t_nouser_static_prototype t set t.money=(t.money+#{price}) where t.user_id=#{userId}
+	
+	]]>	
+	</update>	
+	<!-- NO团推广活动新用户红包处理部分stop -->
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<!-- 根据userId 更新个人用户信息 -->
+	<update id="updateUserOpenIdInfo" parameterType="hashmap">
+	<![CDATA[
+	 update t_nouser t set t.openid=#{openId} where t.user_id=#{userId}
+	]]>
+	</update>
+	<!-- 根据用户userId查询是否设置安全账户 -->
+	<select id="findSecurityUserInfo" parameterType="hashmap" resultType="hashmap">
+	<![CDATA[
+	select
+		t.id,
+		t.user_id,
+		t.gold_coin,
+		t.frozen_gold_coin,
+		t.money,
+		ifnull(t.ali_pay,'no') as ali_pay,
+		ifnull(t.ali_user_name,'no') as ali_user_name,
+		ifnull(t.withdrawals_password,'-1') as withdrawals_password
+	from
+		t_nouser_static_prototype t
+	where
+		t.user_id = #{userId}
+	]]>
+	</select>
+	
+	<!-- 根据支付宝账号查询该账号是否存在 -->
+	<select id="findAiliCode" parameterType="java.lang.String" resultType="java.lang.Integer">
+		select count(1) from t_nouser_static_prototype where ali_pay=#{aliPay}
+	</select>
+	
+	<!-- 更新安全账户信息 static -->
+	<update id="updateSecurityInfo" parameterType="java.util.HashMap" >
+		
+		update 
+			t_nouser a,
+			t_nouser_static_prototype b
+		set 
+			 
+			 b.ali_pay = #{ali_pay},
+			 b.ali_user_name = #{ali_user_name},
+			 <if test="withdrawals_password != null">
+				 b.withdrawals_password =#{withdrawals_password},
+			 </if>
+			 <if test="login_password != null">
+			 	a.user_password =#{login_password},
+			 </if>
+			 b.update_time = now()
+		where
+			a.user_id = b.user_id
+			and 
+			a.user_id = #{userId}
+		
+	</update>
+	
+	<!-- 更新安全账户信息 static -->
+	<update id="modifyWithdrawalsPassword" parameterType="java.util.HashMap" >
+		update 
+			 t_nouser_static_prototype
+		set 
+			 withdrawals_password = #{withdrawalsPassword},
+			 update_time = now()
+		where
+			 user_id = #{userId}
+		
+	</update>
+	
+	<!-- 根据用户userId查询是否设置安全账户 -->
+	<select id="findUserPhoneById" parameterType="java.lang.Integer" resultType="java.lang.String">
+	<![CDATA[
+		select user_phone from t_nouser where user_id = #{userId}
+	]]>
+	</select>
+	
+	
+	<!-- 插入用户初始化静态数据信息  -->
+	<insert id="addNouserStaticProtoType" parameterType="java.util.HashMap">
+		<![CDATA[ 
+		insert  t_nouser_static_prototype (
+				user_id,
+				gold_coin,	
+				create_time	
+		)
+		values(
+				#{userId},
+				#{goldCoin},
+				now()
+		)
+		]]>
+	</insert>
+	<!--信息更新 -->
+	<update id="updateNouser"  parameterType="com.suyin.nouser.model.Nouser">
+		<![CDATA[
+		update
+		 t_nouser
+		set 
+		openid=#{openid},
+		user_phone=#{userPhone},
+		user_password=#{userPassword},
+		user_state=#{userState},
+		update_time=now()
+		where user_id =#{userId}
+		]]>
+	</update>
+	<!-- 系统生成密码更改 -->
+	<update id="updateNouserPwd"  parameterType="com.suyin.nouser.model.Nouser">
+		<![CDATA[
+		update
+		 t_nouser
+		set 
+		user_password=#{userPassword},
+		update_time=now()
+		where user_phone =#{userPhone}
+		]]>
+	</update>
+	<!-- 信息插入 -->
+	<insert id="addNouser" parameterType="com.suyin.nouser.model.Nouser" useGeneratedKeys="true" keyProperty="userId">
+	<![CDATA[
+
+		insert  t_nouser (
+				openid,		
+				user_phone,		
+				user_password,		
+				user_state,		
+				create_time,		
+				update_time		
+		)
+		values(
+				#{openid},
+				#{userPhone},
+				#{userPassword},
+				0,
+				now(),
+				now()
+		)
+		]]>
+	</insert>
+	
+	<!-- 根据id删除信息-->
+	<delete id="deleteNouser" parameterType="java.lang.String">
+		<![CDATA[
+	 	delete from t_nouser
+			  	where user_id =#{userId}
+		]]>
+	</delete>
+	
+	<!-- 根据openid -->
+	<select id="findNouserByOpenId" parameterType="com.suyin.nouser.model.Nouser" resultMap="NouserMap">
+		<![CDATA[
+		select * from t_nouser where openid=#{openid}
+		]]>
+	</select>
+	
+	<!-- 根据手机号码查询 -->
+	<select id="findNouserWhereByIphone" parameterType="com.suyin.nouser.model.Nouser" resultMap="NouserMap">	
+		<![CDATA[
+		select * from t_nouser where user_phone=#{userPhone}
+		]]>
+	</select>
+	
+	<!-- 根据userId查询详细信息 -->
+	<select id="findNouserWhereByUserId" parameterType="com.suyin.nouser.model.Nouser" resultMap="NouserMap">	
+		<![CDATA[
+		select * from t_nouser where user_id=#{userId}
+		]]>
+	</select>
+	
+	<!-- 根据用户userId查询钱包方面信息 -->
+	<select id="findNouserStaticInfo" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		<![CDATA[
+		select
+			t.id,
+			t.user_id,
+			t.gold_coin,
+			t.frozen_gold_coin,
+			t.money,
+			t.frozen_money,
+			ifnull(t.ali_pay,'') as ali_pay,
+			ifnull(t.ali_user_name,'') as ali_user_name,
+			ifnull(t.withdrawals_password,'') as withdrawals_password,
+			n.user_password,
+			n.user_phone
+		from
+			t_nouser_static_prototype t
+			join t_nouser n on n.user_id=t.user_id
+		where
+			t.user_id = #{userId}
+		]]>
+	</select>
+	<!-- 根据用户userId查询金币相关信息 -->
+	<select id="findNouserMoneyInfo" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		<![CDATA[
+		select 
+			a.user_id,
+			ifnull(a.openid,0) as openid,
+			a.user_phone,
+			a.user_state,
+			b.gold_coin,
+			b.frozen_gold_coin,
+			b.frozen_money
+		from t_nouser  a join t_nouser_static_prototype b on b.user_id=a.user_id 
+		where
+		 a.user_id=#{userId}
+		]]>
+	</select>
+	<!-- 兑换活动参与后减少对应金币 -->
+	<update id="updateNouserMoneyInfo" parameterType="java.util.HashMap">
+	<![CDATA[ 
+	 update t_nouser_static_prototype  s set s.update_time=now(),s.gold_coin=#{Integral} where s.user_id=#{user_id}
+	]]>
+	</update>
+	
+	<!-- 查询信息列表 -->
+	<select id="findNouserByLogin" parameterType="com.suyin.nouser.model.Nouser"  resultMap="NouserMap">
+	   <![CDATA[
+	   select
+			t.user_id,
+			ifnull(t.openid,'') as openid,
+			t.user_phone,
+			t.user_password,
+			t.user_state,
+			t.create_time,
+			t.update_time
+		from
+			t_nouser t
+		where
+			t.user_phone = #{userPhone}
+		]]>
+	</select>
+
+	<!-- 分页查询信息 -->
+	<select id="findNouserByPage" parameterType="com.suyin.nouser.model.Nouser" resultMap="NouserMap">
+		<![CDATA[
+		select
+			t.user_id,
+			ifnull(t.openid,'') as openid,
+			t.user_phone,
+			t.user_password,
+			t.user_state,
+			t.create_time,
+			t.update_time
+		from
+			t_nouser t
+		where
+			1=1
+		]]>
+	</select>
+	
+</mapper>	

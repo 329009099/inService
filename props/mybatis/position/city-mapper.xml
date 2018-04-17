@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suyin.postion.mapper.CityMapper">
+		<!-- 根据name查询信息 -->
+	<select id="findCityByName" parameterType="java.lang.String" resultType="com.suyin.postion.model.City">
+	   <![CDATA[
+		 select
+			tc.id as id,
+			tc.name as name
+		from
+			t_city tc
+				
+			where  tc.name=#{name}
+		]]>
+	</select>
+	
+	<!-- 根据id查询信息 -->
+		<select id="findCityById" parameterType="java.lang.String" resultType="com.suyin.postion.model.City">
+	   <![CDATA[
+		 select
+			tc.id as id,
+			tc.name as name
+		from
+			t_city tc
+				
+			where  tc.id=#{id}
+		]]>
+	</select>
+		<!-- 根据hotCity查询热门城市信息 -->
+		<select id="findHotCity" parameterType="com.suyin.postion.model.City" resultType="hashmap">
+	   <![CDATA[
+		 select
+			tc.id as id,
+			tc.name as name
+		from
+			t_city tc
+				
+			where  tc.hotCity=#{hotCity}
+		]]>
+	</select>
+</mapper>	

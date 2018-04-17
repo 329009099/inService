@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suyin.common.mapper.MessageMapper">
+	<!-- 关于两个赚的活动消息,提供userId和expId, pattern-->
+	<insert id="addMessageForExpTask" parameterType="hashmap">
+		insert into t_nouser_message(user_id,content,create_time)
+		select #{userId},REPLACE(#{pattern},'#', kk.k),now()
+		from (select title as k from t_exp_task where exp_id=#{expId}) as kk
+	</insert>
+	
+	<!-- 一般的消息，提供content和userId -->
+	<insert id="addMessage" parameterType="hashmap">
+		insert into t_nouser_message(user_id,content,create_time)
+		values(#{userId},#{content},now())
+	</insert>
+	
+	<select id="findMessageForUserByPage" resultType="hashmap">
+		select message_id, content,date_format(create_time,'%Y-%m-%d %H:%i:%S') as create_time from t_nouser_message
+		where user_id=#{userId}
+		order by create_time desc
+	</select>
+	
+</mapper>

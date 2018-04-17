@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suyin.nouser.mapper.NoUserCenterMapper">
+	
+	<insert id="addSignInLog" parameterType="int">
+		insert into t_nouser_signIn_log(user_id,last_signIn_time,count,create_time)
+		values(#{userId},current_date(),1,now())
+		on duplicate key update count=count+1 ,last_signIn_time=current_date()
+	</insert>
+	<!-- 看连续签到天数 -->
+	<select id="findSignInDays" parameterType="int" resultType="int">
+		select count from t_nouser_signIn_log where user_id=#{userId}
+	</select>
+	<!-- 看今天有没有签到 -->
+	<select id="findIfSignInToday" parameterType="int" resultType="int">
+		select count(1) as c from t_nouser_signIn_log where user_id=#{userId}
+		and last_signIn_time=current_date()
+	</select>
+	<!-- 找到上一回签到的时间 -->
+	<select id="findLastSignInTime" parameterType="int" resultType="java.util.Date">
+		select last_signIn_time as c from t_nouser_signIn_log where user_id=#{userId}
+	</select>
+	
+	<update id="updateSignInLog" parameterType="int">
+		update t_nouser_signIn_log set count=1,last_signIn_time=current_date()
+		where user_id=#{userId} 
+	</update>
+	
+	<select id="findUserInfo" parameterType="int" resultType="hashmap">
+		select p.*,
+		(select count(1) from t_nouser_message where user_id=p.user_id and is_read='N') as unread
+ 		from t_nouser_static_prototype p where user_id=#{userId}
+	</select>
+	<!-- 更新齐心赚成功或失败状态，这一点令人烦躁的一腿 -->
+	<update id="updateIsLoseTaskOrderInfo" parameterType="java.lang.String">
+	<![CDATA[		
+		update
+			t_exp_task_order t 
+		join t_exp_task b on b.exp_id=t.exp_id
+		set 
+		t.status=case when t.total_gold>=1 then 2 else 3 end
+		where
+			t.module_type = 0
+		and
+		  t.user_id = #{userId}
+		and 
+		(b.exp_remain_gold<1 or now()>b.end_time )
+	]]>
+	
+	</update>
+	<!-- 我的参与 -->
+	<select id="findInvolvementByPage" parameterType="com.suyin.nouser.model.ExperienceOrder" resultType="com.suyin.nouser.model.ExperienceOrder">
+	select * from (
+			select
+			 '' as qmType,
+			expId,'' as solidGold,
+			image,
+			minGold,
+			maxgold,
+			orderId,
+			title,
+			orderType,
+			create_time ,
+			status,
+			showType,'' as shareImgUrl,
+			'' as shareTitle,'' as shareUrl,
+		  	detaiId
+		from (
+			select 
+				 ed.exp_detail_id as expId,
+				 e.exp_img_url as image,
+				 '' as minGold,
+				 '' as maxGold,
+				 eo.order_id as orderId,
+				 e.title,'1' as orderType ,
+				 case eo.status when 0 then 1 when 1 then 2
+				 when 2 then 3 end as status,
+				 eo.create_time,
+				 e.exp_type as showType,
+				 ed.exp_detail_id as detaiId
+			from t_exp_order eo
+		inner join t_experience e on eo.exp_id=e.exp_id 
+		inner join t_exp_detail ed on eo.detail_id=ed.exp_detail_id and eo.exp_id=ed.exp_id
+		inner join t_product p on ed.pro_id=p.pro_id where eo.user_id=#{userId}) t where 1=1
+		<if test="status!=null and ''!=status">
+		  and t.status=#{status}
+		</if>
+		union ALL
+			select 
+				et.show_type as qmType,
+				et.exp_id as expId,
+				et.exp_user_gold as solidGold,
+				et.exp_img_url as image,
+				et.user_share_gold as minGold,
+				et.user_max_gold as maxGold,
+				eto.order_id as orderId,
+				et.title,
+				'0' as orderType,
+				eto.create_time,
+				eto.status,
+				et.exp_type as showType,
+				et.share_img_url as shareImgUrl,
+				et.share_title as shareTitle,
+				et.share_url as shareUrl,
+				'' as detaiId
+			 from t_exp_task_order eto
+		inner join t_exp_task et on eto.exp_id=et.exp_id where eto.user_id=#{userId}
+		<if test="status!=null and ''!=status">
+		 and	eto.status=#{status}
+		</if>
+
+		) t1 order by create_time desc,orderId asc,orderType asc
+	</select>
+	
+	<!-- 个人中心查询我的券 -->
+	<select id="findVouchByPage" parameterType="com.suyin.nouser.model.ExperienceVouch" resultType="com.suyin.nouser.model.ExperienceVouch">
+		<![CDATA[
+		select * from (
+			 select 
+			 		eo.is_discuss as isDiscuss,
+					e.title,
+					e.exp_type as type,
+					eo.order_id as orderId,
+					ev.user_id as userId,
+					ev.vou_code as vouCode,				
+					ed.exp_detail_id as detailId,
+					ed.pro_id as proId,
+					pr.pro_name as proName,
+					ed.member_id as memberId,
+					date_format(ev.validity,'%Y-%m-%d') as validity,
+					case when ev.validity< date_format(now(),'%Y-%m-%d') and ev.vou_stauts=0 then 2
+					else ev.vou_stauts end as status,ev.create_time
+				from t_exp_voucher ev
+				inner join t_exp_order eo on ev.order_id=eo.order_id
+				inner join t_experience e on eo.exp_id=e.exp_id
+				inner join t_exp_detail ed on ed.exp_detail_id=eo.detail_id
+				inner join t_product pr on pr.pro_id=ed.pro_id
+				where ev.user_id=#{userId}
+			) t where t.status=#{status} order by t.orderId desc
+		]]>
+	</select>
+	
+	<update id="updateUserMoney" parameterType="hashmap">
+		update t_nouser_static_prototype set money=money-#{cash},frozen_money
+		=frozen_money+#{cash} where user_id=#{userId}
+	</update>
+	<update id="updateAddUserMoney" parameterType="hashmap">
+		update t_nouser_static_prototype set money=money+#{money} where user_id=#{userId}
+	</update>
+	<insert id="addCashLog" parameterType="hashmap" >
+		insert into t_nouser_cash_log
+		(
+			user_id,
+			money,
+			direction,
+			create_time,
+			update_time,
+			content,
+			teller_id,
+			status
+		)
+		values
+		(
+			#{userId},
+			#{cash},
+			#{direction},
+			now(),
+			now(),
+			#{content},
+			#{coinTellerId},
+			#{log_status}
+		)
+	</insert>
+	
+	<insert id="addCashTeller"  parameterType="com.suyin.common.model.CoinTeller"  useGeneratedKeys="true" keyProperty="logId">
+		insert into t_nouser_cash_teller
+		(
+			user_id,money,status,ali_pay,create_time,name
+		)
+		values
+		(
+			#{userId},#{money},#{status},#{alipay},now(),#{name}
+		)
+	</insert>
+	
+	<select id="findIsTellerInfo" parameterType="hashmap" resultType="hashmap">
+	<![CDATA[
+		select
+			*
+		from
+			t_nouser_cash_teller t
+		where
+			t.`status` = 0
+		and t.user_id = #{userId}
+	]]>
+	</select>
+	
+	<select id="findIsCoinInfo" parameterType="hashmap" resultType="hashmap">
+	<![CDATA[
+		select
+			*
+		from
+			t_nouser_coin_teller t
+		where
+			t.`status` = 0
+		and t.user_id = #{userId}
+	]]>
+	</select>
+	
+	<update id="updateUserCoin" parameterType="hashmap">
+		update t_nouser_static_prototype set gold_coin=gold_coin-#{coin}
+		 where user_id=#{userId}
+	</update>
+	
+	<update id="updatePF" parameterType="hashmap">
+		update t_nouser_static_prototype set withdrawals_password=#{pf}
+		where user_id=#{userId}
+		<if test="opf!=null">
+			and withdrawals_password=#{opf}
+		</if>
+	</update>
+	
+	<update id="updateMsgStatus" parameterType="int">
+		update t_nouser_message set is_read='Y' where user_id=#{userId}
+	</update>
+	
+	<!-- 更新头像 -->
+	<update id="updateHead">
+		<![CDATA[
+		update 
+			t_nouser_static_prototype 
+		set 
+			head_image_url = #{0} 
+		where 
+			user_id = #{1}
+		]]>
+	</update>
+</mapper>	

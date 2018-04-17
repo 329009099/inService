@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suyin.about.mapper.AboutMapper">
+	
+	<select id="findMemberByAll" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+<!-- 		select * from t_member where t_member.parent_id=0 or is_chain=1 order by t_member.create_time desc -->
+		select * from t_member where t_member.parent_id=0  order by t_member.create_time desc
+	</select>
+	<select id="findStoreByAll" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+	select * from t_store where 1=1 order by t_store.create_time desc
+	</select>
+
+	
+</mapper>

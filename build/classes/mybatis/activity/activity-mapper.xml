@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suyin.activity.mapper.ActivityMapper">
+
+	<resultMap type="com.suyin.activity.model.Activity" id="ActivityMap">
+	
+		<result column="id" property="id"/>
+		<result column="title" property="title"/>
+		<result column="begin_time" property="beginTime"/>
+		<result column="end_time" property="endTime"/>
+		<result column="create_time" property="createTime"/>
+		<result column="update_time" property="updateTime"/>
+		<result column="voting_rules" property="votingRules"/>
+		<result column="content" property="content"/>
+		<result column="participant_number" property="participantNumber"/>
+		<result column="visit_times" property="visitTimes"/>
+		<result column="exp_num" property="expNum"/>
+	
+	</resultMap>
+	<update id="updateNumberplus"  parameterType="java.util.HashMap">
+		<![CDATA[
+		update t_activity t set t.exp_num=(ifnull(t.exp_num,0)+1) where 1=1
+		
+		]]>		
+	</update>
+	<!-- 查询信息列表 -->
+	<select id="findActivityById" parameterType="com.suyin.activity.model.Activity" resultMap="ActivityMap">
+	   <![CDATA[
+		select  id,
+				title,		
+				date_format(t_activity.begin_time,'%Y-%m-%d %H:%i:%s') as begin_time,
+				date_format(t_activity.end_time,'%Y-%m-%d %H:%i:%s') as end_time,	
+				date_format(t_activity.create_time,'%Y-%m-%d %H:%i:%s') as create_time,
+			    date_format(t_activity.update_time,'%Y-%m-%d %H:%i:%s') as update_time,	
+				voting_rules,		
+				content,		
+				participant_number,		
+				visit_times,
+				exp_num
+		from 
+				t_activity 
+		where  1= 1
+				order by update_time desc limit 1
+		]]>
+	</select>
+	
+	
+	<!-- 查询信息列表 -->
+	<select id="getStatistics"  resultType="com.suyin.activity.model.PartDTO">
+	   <![CDATA[
+	  	SELECT
+		COUNT(1) AS participatorNumber,
+		(
+		SELECT
+			IFNULL(SUM(t2.votes_number),0)
+		FROM
+			t_participator t2
+		) AS totalVotes 
+		FROM
+		t_act_record t1
+		WHERE
+		1 = 1
+		]]>
+	</select>
+	
+</mapper>	

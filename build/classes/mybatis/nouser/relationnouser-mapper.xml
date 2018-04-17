@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suyin.nouser.mapper.RelationNouserMapper">
+
+	<!-- 用户关联表  -->
+	<resultMap type="com.suyin.nouser.model.RelationNouser" id="RelationNouserMap">
+	
+		<result column="relation_user_id" property="relationUserId"/>
+		<result column="user_id" property="userId"/>
+		<result column="registered_type" property="registeredType"/>
+		<result column="registered_edition" property="registeredEdition"/>
+		<result column="create_time" property="createTime"/>
+		<result column="update_time" property="updateTime"/>
+	
+	</resultMap>
+		<!--信息更新 -->
+	<update id="updateRelationNouser"  parameterType="com.suyin.nouser.model.RelationNouser">
+		<![CDATA[
+		update
+		 t_relation_nouser
+		set 
+		user_id=#{userId},
+		registered_type=#{registeredType},
+		registered_edition=#{registeredEdition},
+		update_time=now()
+		where relation_user_id =#{relationUserId}
+		]]>
+	</update>
+	
+	<!-- 信息插入 -->
+	<insert id="addRelationNouser" parameterType="com.suyin.nouser.model.RelationNouser" useGeneratedKeys="true" keyProperty="relationUserId">
+	<![CDATA[
+
+		insert  t_relation_nouser (
+				user_id,		
+				registered_type,		
+				registered_edition,		
+				create_time,		
+				update_time	
+		)
+		values(
+				#{userId},
+				#{registeredType},
+				#{registeredEdition},
+				now(),
+				now()
+		)
+		]]>
+	</insert>
+	
+	<!-- 根据id删除信息-->
+	<delete id="deleteRelationNouser" parameterType="java.lang.String">
+		<![CDATA[
+	 	delete from t_relation_nouser
+			  	where relation_user_id =#{relationUserId}
+		]]>
+	</delete>
+	
+	<!-- 查询信息列表 -->
+	<select id="findRelationNouser" parameterType="com.suyin.nouser.model.RelationNouser" resultMap="RelationNouserMap">
+	   <![CDATA[
+		select * from t_relation_nouser where 1=1
+		]]>
+	</select>
+	
+	<!-- 分页查询信息 -->
+	<select id="findRelationNouserByPage" parameterType="com.suyin.nouser.model.RelationNouser" resultMap="RelationNouserMap">
+		<![CDATA[
+		select  * from t_relation_nouser where 1=1
+		]]>
+	</select>
+	
+</mapper>	

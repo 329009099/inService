@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suyin.other.mapper.OtherMapper">
+	
+	<!-- 查询首页或者发现中的广告位信息 type=0:代表首页广告位 1：代表发现活动中的广告位 -->
+	<select id="findAdvs" resultType="hashmap" parameterType="hashmap">
+		select
+			t.adv_id,
+			t.adv_name,
+			t.create_time,
+			t.entity,
+			t.link_url,
+			t.module,
+			t.pic_index,
+			t.pic_url,
+			t.type,
+			t.update_time,
+			t.exp_id
+	
+		from
+			t_advs t
+		where
+			find_in_set(#{regtype},t.client_type)>0
+		order by
+			t.pic_index asc
+	</select>	
+		
+	<select id="findAbout" resultType="hashmap" parameterType="string">
+		select * from t_about where type=#{type}
+	</select>	
+	
+	<select id="findAdvsById" resultType="hashmap" parameterType="string">
+		select t.adv_id,t.adv_name,t.create_time,t.entity,t.link_url,t.module,t.pic_index,t.pic_url,t.type,t.update_time,t.description from t_advs t where t.adv_id=#{id}
+	</select>
+	
+	<select id="findActIntoDetail" resultType="hashmap" parameterType="string">
+		select * from t_act_intro where type=#{type}
+	</select>
+</mapper>	

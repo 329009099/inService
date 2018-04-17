@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suyin.nouser.mapper.NoUserPrototypeMapper">
+
+	<resultMap type="java.util.HashMap" id="utilResultMap" >
+			<association  javaType="java.lang.String" property="isChildren" column="id"   select="findIsChildren"  ></association>
+	</resultMap>
+	
+	<!-- 检查当前节点是否有子集 -->
+	<select id="findIsChildren" resultType="java.lang.Integer" parameterType="java.lang.String" >
+		SELECT COUNT(0) FROM system_data_dictionary WHERE parentId=#{dictionary_id}
+	</select>
+
+	
+	<update id="updateNoUserPrototype" parameterType="com.suyin.nouser.model.NoUserPrototype">
+		update t_user_prototype set 
+		dictionary_id = #{dictionary_id},
+		is_selected = #{is_selected},
+		create_time = now()
+		where user_id = #{user_id} and prototype_id = #{prototype_id}
+	</update>
+	
+	<select id="queryUserPrototypeAll" parameterType="int" resultType="int">
+		select c = (select count(1) FROM system_data_dictionary where module_type = 1 and parentId = 0) 
+		and (select city_id is not null and provin_id is not null from t_nouser_static_prototype where user_id = #{uid})
+		 from 
+		(
+			SELECT count(1) c FROM t_user_prototype where user_id = #{uid} and level = 1
+		)t
+	</select>
+	
+	<insert id="addNoUserCoinLog" parameterType="hashmap">
+		insert into t_nouser_coin_log
+			(
+			user_id,
+			content,
+			gold_coin,
+			direction,
+			create_time
+			)
+			values
+			(
+			#{user_id},
+			#{content},
+			#{gold_coin},
+			#{direction},
+			#{create_time}
+			)
+	</insert>
+	
+	<update id="updateUserGoldCoin" parameterType="hashmap">
+		update t_nouser_static_prototype set gold_coin = #{gold_coin}+gold_coin where user_id = #{user_id}
+	</update>
+
+	<!-- 添加 -->
+	<insert id="addNoUserPrototype" parameterType="com.suyin.nouser.model.NoUserPrototype">
+		insert into t_user_prototype
+			(
+			user_id,
+			dictionary_id,
+			text_value,
+			is_selected,
+			create_time,
+			parent_id,
+			level,
+			code
+			)
+			values
+			(
+			#{user_id},
+			#{dictionary_id},
+			#{text_value},
+			#{is_selected},
+			#{create_time},
+			#{parent_id},
+			#{level},
+			#{code}
+			)
+	
+	</insert>
+
+	<!-- 根据id删除信息-->
+	<delete id="deleteNoUserPrototypeByUserId" parameterType="java.util.HashMap">
+		<![CDATA[
+	 	delete from t_user_prototype
+			  	where user_id =#{userId} and code=#{code}
+		]]>
+	</delete>
+	
+
+	<!-- 获取所有用户动态属性 -->
+	<select id="findUserPrototype" resultType="java.util.HashMap"  parameterType="java.util.HashMap">
+		select dictionary_id , dictionary_name , dictionary_type , parentId , dictionary_code from system_data_dictionary where 1=1 
+		
+		AND system_data_dictionary.parentId=${parentId} and system_data_dictionary.module_type=#{module_type}
+		<if test="null!=dictionary_code and ''!=dictionary_code">
+			AND dictionary_code=#{dictionary_code}
+		</if>
+	</select>
+	
+	<select id="findUserUpdateFlg" resultType="int">
+		SELECT  DATE_FORMAT(now(),'%Y-%m') > next_updatetime FROM t_nouser_static_prototype WHERE user_id = #{uid}
+	</select>
+	
+	<!--  -->
+	<select id="findUserPrototypeOption" parameterType="java.util.HashMap" resultMap="utilResultMap">
+		select
+		d.prototype_id , 
+		s.dictionary_name,
+		s.dictionary_value,
+		s.dictionary_id,
+		s.dictionary_id as id,
+		d.code,
+		d.text_value,
+		ifnull(d.is_selected,0) as selected
+		from
+			system_data_dictionary s
+		left join (
+			select
+				*
+			from
+				t_user_prototype
+			where 1=1
+			<if test="null!=userId and ''!=userId">
+			AND user_id=#{userId}
+			</if>
+			and dictionary_id in (select	dictionary_id		from		system_data_dictionary	where			parentid = #{dictionary_id}	)
+		) d on s.dictionary_id = d.dictionary_id
+		where
+			s.parentid = #{dictionary_id}
+	</select>
+	
+	<select id="findUserPrototypeSelected" parameterType="hashmap" resultType="hashmap">
+		select prototype_id, dictionary_id as did ,parent_id as parent_id from t_user_prototype where user_id=#{userId}
+	</select>
+	
+	
+	<select id="findCodeByMoudleType" parameterType="java.lang.String" resultType="java.util.Map">
+		select dictionary_code as code from system_data_dictionary where  parentId=0   
+		and module_type=#{moudleType}  group by system_data_dictionary.dictionary_code order by system_data_dictionary.dictionary_id asc
+	</select>
+	
+	
+	<select id="findCitysByInface" resultType="hashmap">
+		SELECT id , name , level , upid FROM t_city where level = 1 or level = 2
+	</select>
+	
+	<update id="updateUserArea" parameterType="hashmap">
+	 update t_nouser_static_prototype set city_id = #{city_id} , provin_id = #{provin_id} , next_updatetime = now() where user_id = #{user_id}
+	</update>
+	
+	<select id="findUserCitysByInface" resultType="hashmap">
+		SELECT  head_image_url,city_id , provin_id FROM t_nouser_static_prototype where user_id = #{user_id}
+	</select>
+	
+	<select id="deleteAllLevelOneNoUserPrototypeByUserId" parameterType="hashmap">
+		delete from t_user_prototype where user_id=#{userId}  and level=1
+	</select>
+	
+	<insert id="addUserProperties" parameterType="list">
+		insert into t_user_prototype (user_id,dictionary_id,parent_id,level,is_selected,code,create_time)
+		<foreach collection="list" item="obj" separator="union" open="" close="">
+			select #{obj.userId},#{obj.dictionary_id},#{obj.parent_id},1,1,#{obj.code},now() 
+		</foreach>
+	</insert>
+</mapper>	
