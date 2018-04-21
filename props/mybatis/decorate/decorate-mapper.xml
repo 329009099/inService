@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suyin.decorate.mapper.DecorateMapper">
+
+	<resultMap type="com.suyin.decorate.model.Decorate" id="DecorateMap">
+	
+		<result column="id" property="id"/>
+		<result column="name" property="name"/>
+		<result column="title" property="title"/>
+		<result column="description" property="description"/>
+		<result column="begin_time" property="beginTime"/>
+		<result column="end_time" property="endTime"/>
+		<result column="create_time" property="createTime"/>
+		<result column="update_time" property="updateTime"/>
+		<result column="upate_user" property="upateUser"/>
+		<result column="create_user" property="createUser"/>
+		<result column="share_title" property="shareTitle"/>
+		<result column="share_img" property="shareImg"/>
+		<result column="begin_money" property="beginMoney"/>
+		<result column="end_money" property="endMoney"/>
+		<result column="status" property="status"/>
+		<result column="exp_uv" property="expUv"/>
+		<result column="exp_pv" property="expPv"/>
+		<result column="count_price" property="countPrice"/>
+	
+	</resultMap>
+	
+	<select id="findDecorateById" parameterType="java.lang.String" resultMap="DecorateMap">
+	   <![CDATA[
+		select * from t_exp_decorate t where 1=1  and t.id=#{id}
+		]]>
+	</select>
+	
+	
+</mapper>	
