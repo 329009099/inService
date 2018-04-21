@@ -14,6 +14,7 @@ public class QrCodeWriterUtils {
 
 	        try {
 	            String content = "http://www.baidu.com";
+	            
 	            MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
 	            
 	            Map hints = new HashMap();
