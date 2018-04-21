@@ -9,6 +9,7 @@
 		<result column="name" property="name"/>
 		<result column="title" property="title"/>
 		<result column="description" property="description"/>
+		<result column="seller_description" property="sellerDescription"/>
 		<result column="begin_time" property="beginTime"/>
 		<result column="end_time" property="endTime"/>
 		<result column="create_time" property="createTime"/>
@@ -16,7 +17,8 @@
 		<result column="upate_user" property="upateUser"/>
 		<result column="create_user" property="createUser"/>
 		<result column="share_title" property="shareTitle"/>
-		<result column="share_img" property="shareImg"/>
+		<result column="share_img" property="shareImg"/>		
+		<result column="active_img" property="activeImg"/>
 		<result column="begin_money" property="beginMoney"/>
 		<result column="end_money" property="endMoney"/>
 		<result column="status" property="status"/>

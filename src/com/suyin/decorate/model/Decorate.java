@@ -49,6 +49,15 @@ public class Decorate  implements java.io.Serializable{
      * 活动描述       db_column: description 
      */ 	
 	private java.lang.String description;
+	
+	/**
+	 * 活动图片
+	 */
+	private java.lang.String activeImg;
+	/**
+	 * 商家介绍
+	 */
+	private java.lang.String sellerDescription;
 	/**
 	 * 活动状态 0 未开始,1开始 ，2结束
 	 */
@@ -310,6 +319,22 @@ public class Decorate  implements java.io.Serializable{
 		return new EqualsBuilder()
 			.append(getId(),other.getId())
 			.isEquals();
+	}
+
+	public java.lang.String getActiveImg() {
+		return activeImg;
+	}
+
+	public void setActiveImg(java.lang.String activeImg) {
+		this.activeImg = activeImg;
+	}
+
+	public java.lang.String getSellerDescription() {
+		return sellerDescription;
+	}
+
+	public void setSellerDescription(java.lang.String sellerDescription) {
+		this.sellerDescription = sellerDescription;
 	}
 }
 
