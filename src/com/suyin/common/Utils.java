@@ -24,7 +24,7 @@ public class Utils {
 	 * @param v2 加数  
 	 * @return 两个参数的和  
 	 */  
-	private static double addUserPrice(double v1,double v2){   
+	public static double addUserPrice(double v1,double v2){   
 		BigDecimal b1 = new BigDecimal(Double.toString(v1));   
 		BigDecimal b2 = new BigDecimal(Double.toString(v2));   
 		return b1.add(b2).doubleValue();   
@@ -35,7 +35,7 @@ public class Utils {
 	 * @param v2 减数  
 	 * @return 两个参数的差  
 	 */  
-	private static double subUserPrice(double v1,double v2){   
+	public static double subUserPrice(double v1,double v2){   
 		BigDecimal b1 = new BigDecimal(Double.toString(v1));   
 		BigDecimal b2 = new BigDecimal(Double.toString(v2));   
 		return b1.subtract(b2).doubleValue();   
