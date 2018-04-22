@@ -60,118 +60,28 @@ public class ExpDecorateUserController{
         }
         return map;
     }
-
+    
     /**
-     * 首页
-     * @return 
-     * @see
-     */
-    @RequestMapping(value="/index")
-    public ModelAndView index() {
-
-        return new ModelAndView("expdecorateuser/index");
-    }
-
-
-    /**
-     * 读取列表
+     * 通过Openid修改余额
      * @param request
-     * @return 
-     * @see
-     */
-    @RequestMapping(value = "/list")
-    public @ResponseBody Map<String, Object> findForExpDecorateUserAll(HttpServletRequest request) {
-        ModelMap map=new ModelMap();
-
-        String pag = request.getParameter("page");
-        String showCount = request.getParameter("rows");
-        Page page = new Page();
-        try
-        {      
-            if (null != pag && null != showCount) {
-                page.setCurrentPage(Integer.parseInt(pag));
-                page.setShowCount(Integer.parseInt(showCount));
-            }
-
-            ExpDecorateUser  entityInfo=new ExpDecorateUser ();
-            entityInfo.setPage(page);
-            List<ExpDecorateUser > list=expDecorateUserService.findExpDecorateUserByPage(entityInfo);
-            map.put("rows",list); 
-            map.put("total",entityInfo.getPage().getTotalResult()); 
-
-        }
-        catch (Exception e)
-        {
-            log.error("Controller Error ExpDecorateUserController-> findExpDecorateUserByWhere  " + e.getMessage());
-        }
-
-        return map;
-    }
-
-
-
-
-    /**
-     * 跳转添加页面
-     * @param request
+     * @param entity
      * @return
      */
-    @RequestMapping(value = "/jumpAdd")
-    public ModelAndView jumpExpDecorateUserAdd(HttpServletRequest request) {
-        ModelMap map=new ModelMap();
-
-        return new ModelAndView("expdecorateuser/save",map);
+    @RequestMapping(value = "/updateBalancePriceByOpendId")
+    public @ResponseBody Map<String, Object> updateBalancePriceByOpendId(HttpServletRequest request,ExpDecorateUser entity) {
+    	ModelMap map=new ModelMap(); 
+    	try
+    	{
+    		map.put("result",expDecorateUserService.updateBalancePriceByOpendId(entity));
+    	}
+    	catch (Exception e)
+    	{
+    		log.error("Controller Error ExpDecorateUserController-> updateBalancePriceByOpendId " + e.getMessage());
+    	}
+    	return map;
     }
 
-    /**
-     * 跳转修改页面 
-     * @param request
-     * @return
-     */
-    @RequestMapping(value = "/jumpEdit")
-    public ModelAndView jumpExpDecorateUserEdit(HttpServletRequest request) {
-        ModelMap map=new ModelMap();
-        try
-        {
-
-            if(Tools.notEmpty(request.getParameter("id"))){  
-                
-                ExpDecorateUser entity=new ExpDecorateUser();
-                entity.setUserId(Integer.parseInt(request.getParameter("id")));
-                entity=expDecorateUserService.findExpDecorateUserById(entity);
-                map.put("expdecorateuser",entity);
-
-            }
-        }
-        catch (Exception e)
-        {
-
-            log.error("Controller Error ExpDecorateUserController-> jumpExpDecorateUserEdit  " + e.getMessage());
-        }
-        return new ModelAndView("expdecorateuser/edit",map);
-    }
-
-    /**
-     * 信息保存
-     * Description: <br>
-     * @param 
-     * @return 
-     * @see
-     */
-    @RequestMapping(value = "/add")
-    public @ResponseBody Map<String, Object> saveExpDecorateUserInfo(ExpDecorateUser entity) {
-        ModelMap map=new ModelMap();
-        try
-        {
-            
-            map.put("result",expDecorateUserService.addExpDecorateUser(entity));
-        }
-        catch (Exception e)
-        {
-            log.error("Controller Error ExpDecorateUserController-> saveExpDecorateUserInfo " + e.getMessage());
-        }
-        return map;
-    }
+  
     /**
      * 信息修改
      * Description: <br>

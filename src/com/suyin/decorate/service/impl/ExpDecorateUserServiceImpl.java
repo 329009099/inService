@@ -89,6 +89,28 @@ public class ExpDecorateUserServiceImpl implements ExpDecorateUserService{
         return result;
 
     }
+    /**
+     * 通过Openid修改余额
+     */
+    @Override
+    public Integer updateBalancePriceByOpendId(ExpDecorateUser entity){
+    	
+    	Integer result=0;
+    	try {
+    		if(entity==null){	
+    			return result;
+    		}else{
+    			result = expDecorateUserMapper.updateExpDecorateUser(entity);
+    		}
+    	} catch (Exception e) {
+    		
+    		log.error("通过Openid修改余额异常"+e.getMessage());
+    		new RuntimeException();
+    		e.printStackTrace();
+    	}
+    	return result;
+    	
+    }
 
     /**
      * 删除信息

@@ -29,6 +29,13 @@ public interface ExpDecorateUserMapper {
      * 修改信息
      */
     public Integer updateExpDecorateUser(ExpDecorateUser entity);
+    
+    /**
+     * 通过Openid修改余额
+     * @param entity
+     * @return
+     */
+    public Integer updateBalancePriceByOpendId(ExpDecorateUser entity);
     /**
      * 根据id删除单条信息
      * 

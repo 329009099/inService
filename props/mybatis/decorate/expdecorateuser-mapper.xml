@@ -35,6 +35,17 @@
 		</if>
 	</select>
 	
+	<!--通过Openid修改余额 -->
+	<update id="updateBalancePriceByOpendId"  parameterType="com.suyin.decorate.model.ExpDecorateUser">
+		<![CDATA[
+		update
+		 t_exp_decorate_user
+		set 
+		balance_price=#{balancePrice}
+		where openid =#{openid}
+		]]>
+	</update>
+	
 		<!--信息更新 -->
 	<update id="updateExpDecorateUser"  parameterType="com.suyin.decorate.model.ExpDecorateUser">
 		<![CDATA[

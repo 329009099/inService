@@ -30,6 +30,14 @@ public interface ExpDecorateUserService{
      * @return
      */
     public Integer updateExpDecorateUser(ExpDecorateUser entity);
+    
+    /**
+     * 通过Openid修改余额
+     * @param entity
+     * @return
+     */
+    public Integer updateBalancePriceByOpendId(ExpDecorateUser entity);
+
 
     /**
      * 删除信息
