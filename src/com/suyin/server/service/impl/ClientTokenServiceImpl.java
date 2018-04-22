@@ -26,7 +26,7 @@ import com.suyin.system.util.Tools;
 public class ClientTokenServiceImpl implements ClientTokenService
 {
     private final static Logger log=Logger.getLogger(ClientTokenServiceImpl.class);
-    @Autowired
+    @Autowired(required=false)
     private JedisUtil redisTemplate;
 
 

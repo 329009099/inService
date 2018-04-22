@@ -41,6 +41,25 @@ public class ExpDecorateUserController{
     	ExpDecorateUser expDecorateUser =  this.expDecorateUserService.findUserInfoByUserIdOrOpenId(userId, openId);
     	return expDecorateUser;
     }
+    
+    /**
+     * 新增或修改信息
+     * @param entity
+     * @return
+     */
+    @RequestMapping(value = "/saveOrUptateExpDecorateUserInfo")
+    public @ResponseBody Map<String, Object> saveOrUptateExpDecorateUserInfo(HttpServletRequest request,ExpDecorateUser entity) {
+        ModelMap map=new ModelMap(); 
+        try
+        {
+            map.put("result",expDecorateUserService.updateExpDecorateUser(entity));
+        }
+        catch (Exception e)
+        {
+            log.error("Controller Error ExpDecorateUserController-> saveExpDecorateUserInfo " + e.getMessage());
+        }
+        return map;
+    }
 
     /**
      * 首页

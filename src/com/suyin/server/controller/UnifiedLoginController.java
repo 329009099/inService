@@ -29,7 +29,7 @@ import com.suyin.simple.service.SyncDataService;
 @RequestMapping(value = "/unifiedLogin")
 public class UnifiedLoginController {
 
-	@Autowired
+	@Autowired(required=false)
 	private JedisUtil redisTemplate;
 
 	@Autowired
