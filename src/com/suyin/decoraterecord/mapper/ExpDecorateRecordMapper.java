@@ -11,7 +11,12 @@ import com.suyin.decoraterecord.service.*;
 
 
 public interface ExpDecorateRecordMapper {
-
+	/**
+	 * 根据发起者和接收者openid 查询是否存在记录
+	 * @param params
+	 * @return
+	 */
+	public ExpDecorateRecord findExpRecordByPublisAndReviewOpenid(Map<String,Object>parmas);
     /**
      * 新增信息
      */

@@ -4,14 +4,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import com.suyin.decoraterecord.mapper.ExpDecorateRecordMapper;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import com.suyin.system.util.Md5Util;
 
 import java.util.*;
+
 import com.suyin.decoraterecord.model.*;
 import com.suyin.decoraterecord.service.*;
 
@@ -124,4 +128,11 @@ public class ExpDecorateRecordServiceImpl implements ExpDecorateRecordService{
         List<ExpDecorateRecord> list=expDecorateRecordMapper.findExpDecorateRecord(entity);
         return list!=null&&!list.isEmpty()?list.get(0):null;
     }
+
+	@Override
+	public ExpDecorateRecord findExpRecordByPublisAndReviewOpenid(
+			Map<String, Object> parmas) {
+		// TODO Auto-generated method stub
+		return expDecorateRecordMapper.findExpRecordByPublisAndReviewOpenid(parmas);
+	}
 }

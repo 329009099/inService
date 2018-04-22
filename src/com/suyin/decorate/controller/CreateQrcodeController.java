@@ -3,6 +3,8 @@ package com.suyin.decorate.controller;
 import java.io.File;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
@@ -67,35 +69,44 @@ public class CreateQrcodeController {
 		//变更发起用户的佣金
 		//判断发起者和接受者二者是否为同一id，是不进行操作，反之进行增加
 		if(!publishopenid.equals(accptopenid)){
-	
-			try {
-				//随机金额区间，记录本次佣金金额
-				double  randomPrice=Utils.nextDouble(decorate.getBeginMoney().doubleValue()-1, decorate.getEndMoney().doubleValue()+1);
-				DecimalFormat df= new DecimalFormat("######0.00");
-				String commission= df.format(randomPrice);
-				//最终记录的佣金，保留2位小数点
-				//开始变更发起者佣金账户 减少余额
-				double v1=decorateUser.getBalancePrice().doubleValue(); //减数
-				double v2=Double.parseDouble(commission);//被减数
-				double commissionPrice=Utils.subUserPrice(v1, v2);//前往更新金额
-				BigDecimal bigprice=new BigDecimal(commissionPrice);
-				//调用更新user账户方法，根据openid 更新余额
-				ExpDecorateUser usereEntity=new ExpDecorateUser();
-				usereEntity.setOpenid(publishopenid);
-				usereEntity.setBalancePrice(bigprice);
-				expDecorateUserService.updateBalancePriceByOpendId(usereEntity);
-				
-				//向t_exp_decorate_record表中插入记录，记录详细，用于用户的钱包中的金额详细展示
-				ExpDecorateRecord entity=new ExpDecorateRecord();
-				entity.setPublishOpenid(publishopenid);
-				entity.setAcceptOpenid(accptopenid);
-				entity.setState(1);
-				entity.setCommissionPrice(commission);//本次生成的佣金金额
-				expDecorateRecordService.addExpDecorateRecord(entity);
-		
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				log.error("金额转换失败....",e);
+			//查询当前受邀者是否已经查看过，发起者的二维码，或点击过连接，不可进行二次佣金增长
+			//根据 发起者和接收者 openid 查询是否存在，已经有记录，则不能继续，无记录的情况下，正常记录
+			Map<String,Object>params=new HashMap<String,Object>();
+			params.put("publishopenid", publishopenid);
+			params.put("accptopenid", accptopenid);
+			ExpDecorateRecord exRecord=expDecorateRecordService.findExpRecordByPublisAndReviewOpenid(params);
+			if(null!=exRecord){
+				log.debug("当前用户已经，被邀请过，无法再次邀请..");
+			}else{
+				try {
+					//随机金额区间，记录本次佣金金额
+					double  randomPrice=Utils.nextDouble(decorate.getBeginMoney().doubleValue()-1, decorate.getEndMoney().doubleValue()+1);
+					DecimalFormat df= new DecimalFormat("######0.00");
+					String commission= df.format(randomPrice);
+					//最终记录的佣金，保留2位小数点
+					//开始变更发起者佣金账户 减少余额
+					double v1=decorateUser.getBalancePrice().doubleValue(); //减数
+					double v2=Double.parseDouble(commission);//被减数
+					double commissionPrice=Utils.subUserPrice(v1, v2);//前往更新金额
+					BigDecimal bigprice=new BigDecimal(commissionPrice);
+					//调用更新user账户方法，根据openid 更新余额
+					ExpDecorateUser usereEntity=new ExpDecorateUser();
+					usereEntity.setOpenid(publishopenid);
+					usereEntity.setBalancePrice(bigprice);
+					expDecorateUserService.updateBalancePriceByOpendId(usereEntity);
+
+					//向t_exp_decorate_record表中插入记录，记录详细，用于用户的钱包中的金额详细展示
+					ExpDecorateRecord entity=new ExpDecorateRecord();
+					entity.setPublishOpenid(publishopenid);
+					entity.setAcceptOpenid(accptopenid);
+					entity.setState(1);
+					entity.setCommissionPrice(commission);//本次生成的佣金金额
+					expDecorateRecordService.addExpDecorateRecord(entity);
+
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					log.error("金额转换失败....",e);
+				}
 			}
 		}
 
