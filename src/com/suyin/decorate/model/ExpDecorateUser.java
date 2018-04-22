@@ -1,5 +1,7 @@
 package com.suyin.decorate.model;
 
+import java.math.BigDecimal;
+
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -55,11 +57,11 @@ public class ExpDecorateUser  implements java.io.Serializable{
     /**
      * 总金额       db_column: count_price 
      */ 	
-	private Long countPrice;
+	private BigDecimal countPrice;
     /**
      * 余额       db_column: balance_price 
      */ 	
-	private Long balancePrice;
+	private BigDecimal balancePrice;
     /**
      * 支付宝账号       db_column: alipay_number 
      */ 	
@@ -136,19 +138,19 @@ public class ExpDecorateUser  implements java.io.Serializable{
 		this.userState = value;
 	}
 	
-	public Long getCountPrice() {
+	public BigDecimal getCountPrice() {
 		return this.countPrice;
 	}
 	
-	public void setCountPrice(Long value) {
+	public void setCountPrice(BigDecimal value) {
 		this.countPrice = value;
 	}
 	
-	public Long getBalancePrice() {
+	public BigDecimal getBalancePrice() {
 		return this.balancePrice;
 	}
 	
-	public void setBalancePrice(Long value) {
+	public void setBalancePrice(BigDecimal value) {
 		this.balancePrice = value;
 	}
 	
