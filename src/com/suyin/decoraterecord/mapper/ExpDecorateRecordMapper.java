@@ -1,9 +1,8 @@
 package com.suyin.decoraterecord.mapper;
 
 
-import java.util.List;
-
 import java.util.*;
+
 import com.suyin.decoraterecord.model.*;
 import com.suyin.decoraterecord.service.*;
 
@@ -11,6 +10,13 @@ import com.suyin.decoraterecord.service.*;
 
 
 public interface ExpDecorateRecordMapper {
+	
+	/**
+	 * 查询我的邀请
+	 * @param entity
+	 * @return
+	 */
+	public List<Map<String, Object>> findInviteDecorateByPage(Map<String,Object> condition);
 	/**
 	 * 根据发起者和接收者openid 查询是否存在记录
 	 * @param params

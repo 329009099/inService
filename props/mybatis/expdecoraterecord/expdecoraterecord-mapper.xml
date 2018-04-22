@@ -58,7 +58,25 @@
 			  	where record_id ={recordId}
 		]]>
 	</delete>
-	
+	<!-- 查询我的邀请 -->
+	<select id="findInviteDecorateByPage" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				t.accept_openid,
+				t.create_time,
+				t.commission_price,
+				 u.nick_name,
+				u.head_img
+			FROM
+				t_exp_decorate_record t 
+			RIGHT JOIN 
+				t_exp_decorate_user u 
+			ON 
+				t.accept_openid=u.openid
+			WHERE
+				t.publish_openid = #{openid}
+			]]>
+	</select>
 	<select id="findExpRecordByPublisAndReviewOpenid" parameterType="hashmap" resultMap="ExpDecorateRecordMap">
 		<![CDATA[
 		SELECT

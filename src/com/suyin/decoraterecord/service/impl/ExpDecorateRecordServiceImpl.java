@@ -135,4 +135,10 @@ public class ExpDecorateRecordServiceImpl implements ExpDecorateRecordService{
 		// TODO Auto-generated method stub
 		return expDecorateRecordMapper.findExpRecordByPublisAndReviewOpenid(parmas);
 	}
+
+	@Override
+	public List<Map<String, Object>> findInviteDecorateByPage(Map<String,Object> condition) {
+		// TODO Auto-generated method stub
+		return expDecorateRecordMapper.findInviteDecorateByPage(condition);
+	}
 }

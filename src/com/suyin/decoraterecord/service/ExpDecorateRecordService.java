@@ -1,8 +1,7 @@
 package com.suyin.decoraterecord.service;
 
-import java.util.List;
-
 import java.util.*;
+
 import com.suyin.decoraterecord.model.*;
 import com.suyin.decoraterecord.service.*;
 
@@ -44,7 +43,12 @@ public interface ExpDecorateRecordService{
      * @return
      */
     public List<ExpDecorateRecord> findExpDecorateRecord(ExpDecorateRecord entity);
-
+    /**
+     * 查询我的邀请
+     * @param entity
+     * @return
+     */
+    public List<Map<String,Object>> findInviteDecorateByPage( Map<String,Object> params);
     /**
      * 查找信息列表(分页)
      * @param entity

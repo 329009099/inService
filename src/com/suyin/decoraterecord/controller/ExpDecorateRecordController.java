@@ -1,14 +1,16 @@
 
 package com.suyin.decoraterecord.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -27,9 +29,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.suyin.system.model.Page;
+import com.suyin.system.util.CommLogUtil;
+import com.suyin.system.util.Constant;
 import com.suyin.system.util.Tools;
 
 import java.util.*;
+
+import com.suyin.common.Utils;
 import com.suyin.decoraterecord.model.*;
 import com.suyin.decoraterecord.service.*;
 
@@ -57,41 +63,35 @@ public class ExpDecorateRecordController{
 
 		return new ModelAndView("expdecoraterecord/index");
 	}
-
-
 	/**
-	 * 读取列表
+	 * 查询我的邀请
 	 * @param request
-	 * @return 
-	 * @see
+	 * @return
 	 */
-	@RequestMapping(value = "/list")
-	public @ResponseBody Map<String, Object> findForExpDecorateRecordAll(HttpServletRequest request) {
-		ModelMap map=new ModelMap();
+	@RequestMapping(value="/findInvite")
+	public @ResponseBody Map<String,Object>findInviteDecorateByPage(HttpServletRequest request){
+		 ModelMap result=new ModelMap();
+	        Map<String,Object> condition=new HashMap<String, Object>();
+	        String openid=request.getParameter("openid");
+	
+	        Page page=new Page();
+	        if(StringUtils.isNotBlank(request.getParameter("page.showCount"))) 
+	            page.setShowCount(Integer.parseInt(request.getParameter("page.showCount")));
+	        if(StringUtils.isNotBlank(request.getParameter("page.currentPage")))
+	            page.setCurrentPage(Integer.parseInt(request.getParameter("page.currentPage")));
+	        condition.put("page", page); 
+	        condition.put("openid", openid);
+	        result.put("args", condition);
+			List<Map<String,Object> > list=expDecorateRecordService.findInviteDecorateByPage(condition);	
+			if(list.size()<1){
+	            result.put("message", "error");
+	        }else {
+	            result.put("data", list);
+	            result.put("message", "success");
+	       
+	        }
 
-		String pag = request.getParameter("page");
-		String showCount = request.getParameter("rows");
-		Page page = new Page();
-		try
-		{      
-			if (null != pag && null != showCount) {
-				page.setCurrentPage(Integer.parseInt(pag));
-				page.setShowCount(Integer.parseInt(showCount));
-			}
-
-			ExpDecorateRecord  entityInfo=new ExpDecorateRecord ();
-			entityInfo.setPage(page);
-			List<ExpDecorateRecord > list=expDecorateRecordService.findExpDecorateRecordByPage(entityInfo);
-			map.put("rows",list); 
-			map.put("total",entityInfo.getPage().getTotalResult()); 
-
-		}
-		catch (Exception e)
-		{
-			log.error("Controller Error ExpDecorateRecordController-> findExpDecorateRecordByWhere  " + e.getMessage());
-		}
-
-		return map;
+		return result;
 	}
 
 
