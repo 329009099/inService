@@ -41,17 +41,13 @@
 		update
 		 t_exp_decorate_user
 		set 
-		openid={openid},
-		user_phone={userPhone},
-		nick_name={nickName},
-		user_name={userName},
-		user_state={userState},
-		count_price={countPrice},
-		balance_price={balancePrice},
-		alipay_number={alipayNumber},
-		iphone={iphone},
-		password={password},
-		where user_id ={userId}
+		openid=#{openid},
+		user_phone=#{userPhone},
+		user_name=#{userName},
+		alipay_number=#{alipayNumber},
+		iphone=#{userPhone},
+		password=#{password}
+		where user_id =#{userId}
 		]]>
 	</update>
 	
