@@ -99,6 +99,29 @@ public class ExpDecorateUserController{
     	return map;
     }
 
+    /**
+        * 提现创建订单
+        * @param request
+        * @param entity
+        * @return
+        */
+       @RequestMapping(value = "/withdrawCreateOrder")
+       public @ResponseBody Map<String, Object> withdrawCreateOrder(HttpServletRequest request,ExpDecorateUser entity) {
+       	ModelMap map=new ModelMap(); 
+       	try
+       	{
+       		String withdrawPrice =request.getParameter("withdrawPrice");//提现金额
+
+       		map.put("result",expDecorateUserService.withdrawCreateOrder(entity,withdrawPrice));
+       	}
+       	catch (Exception e)
+       	{
+       		log.error("Controller Error ExpDecorateUserController-> withdrawCreateOrder " + e.getMessage());
+       	}
+       	return map;
+       }
+
+     
   
     /**
      * 信息修改

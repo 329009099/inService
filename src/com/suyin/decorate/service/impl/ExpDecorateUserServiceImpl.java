@@ -1,5 +1,7 @@
 package com.suyin.decorate.service.impl;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.suyin.decorate.mapper.ExpDecorateOrderMapper;
 import com.suyin.decorate.mapper.ExpDecorateUserMapper;
+import com.suyin.decorate.model.ExpDecorateOrder;
 import com.suyin.decorate.model.ExpDecorateUser;
 import com.suyin.decorate.service.ExpDecorateUserService;
 
@@ -23,6 +27,9 @@ public class ExpDecorateUserServiceImpl implements ExpDecorateUserService{
     
     @Autowired
     private ExpDecorateUserMapper expDecorateUserMapper; 
+    
+    @Autowired
+    private ExpDecorateOrderMapper expDecorateOrderMapper;
 
 
     /**
@@ -39,6 +46,38 @@ public class ExpDecorateUserServiceImpl implements ExpDecorateUserService{
 		return expDecorateUserMapper.findUserInfoByUserIdOrOpenId(params);
 	}
     
+
+	 /**
+	     * 提现创建订单
+	     */
+	    @Override
+		public Integer withdrawCreateOrder(ExpDecorateUser entity, String withdrawPrice) {
+	    	//先判断传入的密码是否正确
+	    	Map<String, Object> params = new HashMap<String, Object>();
+	    	params.put("userId", entity.getUserId());
+			ExpDecorateUser expDecorateUser = this.expDecorateUserMapper.findUserInfoByUserIdOrOpenId(params);
+	    	if(expDecorateUser != null && entity.getPassword().equals(expDecorateUser.getPassword())){
+	    		//创建提现订单信息
+	    		ExpDecorateOrder expDecorateOrder = new ExpDecorateOrder();
+	    		expDecorateOrder.setCreateTime(new Date());
+	    		expDecorateOrder.setOpenid(entity.getOpenid());
+	    		expDecorateOrder.setUserId(entity.getUserId());
+	    		expDecorateOrder.setState(0);
+	    		expDecorateOrder.setWithdrawPrice(Long.valueOf(withdrawPrice));
+	    		expDecorateOrderMapper.addExpDecorateOrder(expDecorateOrder);
+	    		//修改余额
+	    		BigDecimal withdrawPriceValue = new BigDecimal(withdrawPrice);
+	    		BigDecimal balancePrice = entity.getBalancePrice();
+	    		balancePrice =balancePrice.subtract(withdrawPriceValue);  
+	    		entity.setBalancePrice(balancePrice);
+	    		expDecorateUserMapper.updateBalancePriceByOpendId(entity);
+	    		return 1;
+	    	}
+	    
+	    	//提现失败
+			return 0;
+		}
+	    
     /**
      * 新增信息
      * @param entity

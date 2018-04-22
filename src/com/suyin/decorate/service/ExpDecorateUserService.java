@@ -47,6 +47,12 @@ public interface ExpDecorateUserService{
      */
     public Integer updateBalancePriceByOpendId(ExpDecorateUser entity);
 
+    /**
+     * 提现创建订单
+     * @param entity
+     * @return
+     */
+    public Integer withdrawCreateOrder(ExpDecorateUser entity,String withdrawPrice);
 
     /**
      * 删除信息
