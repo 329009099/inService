@@ -46,6 +46,10 @@ public class ExpDecorateUser  implements java.io.Serializable{
      * 微信昵称       db_column: nick_name 
      */ 	
 	private java.lang.String nickName;
+	/**
+	 * 头像 head_img
+	 */
+	private String headImg;
     /**
      * 实名       db_column: user_name 
      */ 	
@@ -213,6 +217,14 @@ public class ExpDecorateUser  implements java.io.Serializable{
 		return new EqualsBuilder()
 			.append(getUserId(),other.getUserId())
 			.isEquals();
+	}
+
+	public String getHeadimg() {
+		return headimg;
+	}
+
+	public void setHeadimg(String headimg) {
+		this.headimg = headimg;
 	}
 }
 

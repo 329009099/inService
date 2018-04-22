@@ -9,6 +9,7 @@
 		<result column="openid" property="openid"/>
 		<result column="user_phone" property="userPhone"/>
 		<result column="nick_name" property="nickName"/>
+		<result column="head_img" property="headImg"/>
 		<result column="user_name" property="userName"/>
 		<result column="user_state" property="userState"/>
 		<result column="count_price" property="countPrice"/>
