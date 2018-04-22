@@ -160,4 +160,24 @@ public class ExpDecorateUserServiceImpl implements ExpDecorateUserService{
         return list!=null&&!list.isEmpty()?list.get(0):null;
     }
 
+	@Override
+	public Integer initSaveDecorateUser(ExpDecorateUser entity) {
+		// TODO Auto-generated method stub
+	 	Integer result=0;
+    	try {
+    		if(entity==null){	
+    			return result;
+    		}else{
+    			result = expDecorateUserMapper.initSaveDecorateUser(entity);
+    		}
+    	} catch (Exception e) {
+    		
+    		log.error("通过Openid修改余额异常"+e.getMessage());
+    		new RuntimeException();
+    		e.printStackTrace();
+    	}
+    	return result;
+    	
+	}
+
 }

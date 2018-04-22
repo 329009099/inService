@@ -19,6 +19,12 @@ public interface ExpDecorateUserMapper {
 	 */
 	public ExpDecorateUser findUserInfoByUserIdOrOpenId(Map<String,Object> params);
 
+	/**
+	 * wxService初始化信息保存
+	 * @param entity
+	 * @return
+	 */
+    public Integer initSaveDecorateUser(ExpDecorateUser entity);
 
     /**
      * 新增信息

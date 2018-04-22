@@ -16,7 +16,16 @@ public interface ExpDecorateUserService{
 	 */
 	public ExpDecorateUser findUserInfoByUserIdOrOpenId(String userId,String openId);
 
-
+	
+	/**
+	 * wxService 保存用户信息
+	 * openid
+	 * headimg
+	 * nickName
+	 * @param entity
+	 * @return
+	 */
+	public Integer initSaveDecorateUser(ExpDecorateUser entity);
     /**
      * 新增信息
      * @param entity

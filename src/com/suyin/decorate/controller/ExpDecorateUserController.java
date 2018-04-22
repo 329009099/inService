@@ -30,6 +30,24 @@ public class ExpDecorateUserController{
     private ExpDecorateUserService expDecorateUserService;
     
     /**
+     * 新增或修改信息
+     * @param entity
+     * @return
+     */
+    @RequestMapping(value = "/initSaveDecorateUser")
+    public @ResponseBody Map<String, Object> initSaveDecorateUser(HttpServletRequest request,ExpDecorateUser entity) {
+        ModelMap map=new ModelMap(); 
+        try
+        {
+            map.put("result",expDecorateUserService.initSaveDecorateUser(entity));
+        }
+        catch (Exception e)
+        {
+            log.error("Controller Error ExpDecorateUserController-> saveExpDecorateUserInfo " + e.getMessage());
+        }
+        return map;
+    } 
+    /**
      * 通过用户ID和openId查询用户信息
      * @param userId
      * @param openId

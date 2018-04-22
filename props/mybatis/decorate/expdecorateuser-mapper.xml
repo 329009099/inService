@@ -62,7 +62,21 @@
 		where user_id =#{userId}
 		]]>
 	</update>
-	
+	<insert id="initSaveDecorateUser"  parameterType="com.suyin.decorate.model.ExpDecorateUser" useGeneratedKeys="true" keyProperty="id">
+	<![CDATA[
+
+		insert  t_exp_decorate_user (
+				openid,		
+				nick_name,
+				head_img		
+		)
+		values(
+				#{openid},
+				#{nickName},
+				#{headImg}
+		)
+		]]>
+	</insert>
 	<!-- 信息插入 -->
 	<insert id="addExpDecorateUser" parameterType="com.suyin.decorate.model.ExpDecorateUser" useGeneratedKeys="true" keyProperty="id">
 	<![CDATA[
