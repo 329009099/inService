@@ -80,19 +80,25 @@ public class CreateQrcodeController {
 			}else{
 				try {
 					//随机金额区间，记录本次佣金金额
-					double  randomPrice=Utils.nextDouble(decorate.getBeginMoney().doubleValue()-1, decorate.getEndMoney().doubleValue()+1);
+					double  randomPrice=Utils.nextDouble(decorate.getBeginMoney().doubleValue(), decorate.getEndMoney().doubleValue());
 					DecimalFormat df= new DecimalFormat("######0.00");
 					String commission= df.format(randomPrice);
 					//最终记录的佣金，保留2位小数点
 					//开始变更发起者佣金账户 减少余额
-					double v1=decorateUser.getBalancePrice().doubleValue(); //减数
-					double v2=Double.parseDouble(commission);//被减数
-					double commissionPrice=Utils.subUserPrice(v1, v2);//前往更新金额
-					BigDecimal bigprice=new BigDecimal(commissionPrice);
+					double banlanzv1=decorateUser.getBalancePrice().doubleValue(); //加数
+					double countzv1=decorateUser.getCountPrice().doubleValue();//总额加数
+					double v2=Double.parseDouble(commission);//被加数
+					//余额
+					double commissionbanlanPrice=Utils.addUserPrice(banlanzv1, v2);//前往更新金额
+					BigDecimal banlanprice=new BigDecimal(commissionbanlanPrice);
+					//总额
+					double commissionCountPrice=Utils.addUserPrice(countzv1,v2);//前往更新金额
+					BigDecimal countprice=new BigDecimal(commissionCountPrice);
 					//调用更新user账户方法，根据openid 更新余额
 					ExpDecorateUser usereEntity=new ExpDecorateUser();
 					usereEntity.setOpenid(publishopenid);
-					usereEntity.setBalancePrice(bigprice);
+					usereEntity.setBalancePrice(banlanprice);
+					usereEntity.setCountPrice(countprice);
 					expDecorateUserService.updateBalancePriceByOpendId(usereEntity);
 
 					//向t_exp_decorate_record表中插入记录，记录详细，用于用户的钱包中的金额详细展示
@@ -111,13 +117,6 @@ public class CreateQrcodeController {
 		}
 
 		return result;
-	}
-
-	public static void main(String[] args) {
-		double v1=3.33;
-		double v2=3.22;
-		double dd=Utils.subUserPrice(v1, v2);
-		System.out.println(dd);
 	}
 
 
@@ -178,5 +177,19 @@ public class CreateQrcodeController {
 		return result;
 	}
 
+	public static void main(String[] args) {
+		double min=0.10;
+		double max=1.20;
+		try {
+			for (int i = 0; i < 1000; i++) {
+				double  randomPrice=Utils.nextDouble(min, max);
+				System.out.println(randomPrice);
+			}
+	
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
+	}
 }
