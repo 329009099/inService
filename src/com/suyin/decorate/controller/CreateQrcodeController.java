@@ -1,10 +1,14 @@
 package com.suyin.decorate.controller;
 
 import java.io.File;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +17,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.suyin.common.ImageHandleHelper;
 import com.suyin.common.QrCodeWriterUtils;
 import com.suyin.common.Utils;
+import com.suyin.decorate.model.Decorate;
+import com.suyin.decorate.model.ExpDecorateUser;
+import com.suyin.decorate.service.DecorateService;
+import com.suyin.decorate.service.ExpDecorateUserService;
+import com.suyin.decoraterecord.model.ExpDecorateRecord;
+import com.suyin.decoraterecord.service.ExpDecorateRecordService;
 import com.suyin.system.util.SystemPropertiesHolder;
 
 /**
@@ -25,6 +35,81 @@ import com.suyin.system.util.SystemPropertiesHolder;
 public class CreateQrcodeController {
 
 	private final static Logger log=Logger.getLogger(CreateQrcodeController.class);
+
+	@Autowired
+	private ExpDecorateRecordService expDecorateRecordService;//邀请记录
+	@Autowired
+	private DecorateService decorateService;//活动管理信息
+	@Autowired
+	private ExpDecorateUserService expDecorateUserService;//用户信息
+
+	/**
+	 * 1:根据openid查询用户的图片信息
+	 * 2:根据活动id查询活动的信息
+	 * 3：根据邀请发起者，和被邀请者，更新发起者的佣金营销费
+	 * 4:添加被邀请者查看信息时的数据记录(用户发起者记录，佣金的增长记录，用于发起者个人中心的 我邀请的谁，) sql关联查询
+	 * 5:将查询数据组装反馈至share.jsp分享页面
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping("/findShareProjecss")
+	public @ResponseBody ModelMap findShareProjecss(HttpServletRequest request){
+		ModelMap result=new ModelMap();
+		String publishopenid=request.getParameter("publishopenid");//发起者id,首次分享人的openid
+		String accptopenid=request.getParameter("accptopenid");//接收者openid，被邀请者 二维码或分享链接点击者的
+		String id=request.getParameter("id");
+		//根据发起者openid查询用户信息
+		ExpDecorateUser decorateUser=expDecorateUserService.findUserInfoByUserIdOrOpenId("", publishopenid);
+		result.put("user", decorateUser);
+		//根据活动id查询活动信息
+		Decorate decorate=decorateService.findDecorateById(Integer.valueOf(id));
+		result.put("decorate", decorate);
+		//变更发起用户的佣金
+		//判断发起者和接受者二者是否为同一id，是不进行操作，反之进行增加
+		if(!publishopenid.equals(accptopenid)){
+	
+			try {
+				//随机金额区间，记录本次佣金金额
+				double  randomPrice=Utils.nextDouble(decorate.getBeginMoney().doubleValue()-1, decorate.getEndMoney().doubleValue()+1);
+				DecimalFormat df= new DecimalFormat("######0.00");
+				String commission= df.format(randomPrice);
+				//最终记录的佣金，保留2位小数点
+				//开始变更发起者佣金账户 减少余额
+				double v1=decorateUser.getBalancePrice().doubleValue(); //减数
+				double v2=Double.parseDouble(commission);//被减数
+				double commissionPrice=Utils.subUserPrice(v1, v2);//前往更新金额
+				BigDecimal bigprice=new BigDecimal(commissionPrice);
+				//调用更新user账户方法，根据openid 更新余额
+				ExpDecorateUser usereEntity=new ExpDecorateUser();
+				usereEntity.setOpenid(publishopenid);
+				usereEntity.setBalancePrice(bigprice);
+				expDecorateUserService.updateBalancePriceByOpendId(usereEntity);
+				
+				//向t_exp_decorate_record表中插入记录，记录详细，用于用户的钱包中的金额详细展示
+				ExpDecorateRecord entity=new ExpDecorateRecord();
+				entity.setPublishOpenid(publishopenid);
+				entity.setAcceptOpenid(accptopenid);
+				entity.setState(1);
+				entity.setCommissionPrice(commission);//本次生成的佣金金额
+				expDecorateRecordService.addExpDecorateRecord(entity);
+		
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				log.error("金额转换失败....",e);
+			}
+		}
+
+		return result;
+	}
+
+	public static void main(String[] args) {
+		double v1=3.33;
+		double v2=3.22;
+		double dd=Utils.subUserPrice(v1, v2);
+		System.out.println(dd);
+	}
+
+
 	/**
 	 * 创建海报二维码合成
 	 * @param request

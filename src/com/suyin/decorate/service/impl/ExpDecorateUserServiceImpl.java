@@ -100,7 +100,7 @@ public class ExpDecorateUserServiceImpl implements ExpDecorateUserService{
     		if(entity==null){	
     			return result;
     		}else{
-    			result = expDecorateUserMapper.updateExpDecorateUser(entity);
+    			result = expDecorateUserMapper.updateBalancePriceByOpendId(entity);
     		}
     	} catch (Exception e) {
     		
