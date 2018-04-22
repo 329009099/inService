@@ -14,7 +14,7 @@ public class DecorateServiceImpl implements DecorateService {
 	private DecorateMapper decorateMapper;
 	
 	@Override
-	public Decorate findDecorateById(Integer id) {
+	public Decorate findDecorateById(String id) {
 		return decorateMapper.findDecorateById(id);
 	}
 

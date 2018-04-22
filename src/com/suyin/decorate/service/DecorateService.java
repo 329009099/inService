@@ -9,5 +9,5 @@ public interface DecorateService {
 	 * @param id
 	 * @return
 	 */
-	 public Decorate findDecorateById(Integer id);
+	 public Decorate findDecorateById(String id);
 }

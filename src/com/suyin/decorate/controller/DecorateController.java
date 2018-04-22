@@ -22,7 +22,8 @@ public class DecorateController {
 	 * @return
 	 */
 	@RequestMapping("/findDecorateById")
-	public @ResponseBody Decorate findDecorateById(HttpServletRequest request,Integer id) {
+	public @ResponseBody Decorate findDecorateById(HttpServletRequest request) {
+		String id=request.getParameter("id");
 		Decorate decorate = decorateService.findDecorateById(id);
 		return decorate;
 	}

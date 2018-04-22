@@ -64,7 +64,7 @@ public class CreateQrcodeController {
 		ExpDecorateUser decorateUser=expDecorateUserService.findUserInfoByUserIdOrOpenId("", publishopenid);
 		result.put("user", decorateUser);
 		//根据活动id查询活动信息
-		Decorate decorate=decorateService.findDecorateById(Integer.valueOf(id));
+		Decorate decorate=decorateService.findDecorateById(id);
 		result.put("decorate", decorate);
 		//变更发起用户的佣金
 		//判断发起者和接受者二者是否为同一id，是不进行操作，反之进行增加

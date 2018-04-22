@@ -39,7 +39,13 @@ public class ExpDecorateUserController{
         ModelMap map=new ModelMap(); 
         try
         {
-            map.put("result",expDecorateUserService.initSaveDecorateUser(entity));
+        	ExpDecorateUser user=expDecorateUserService.findUserInfoByUserIdOrOpenId("", entity.getOpenid());
+        	if(null!=user){
+        		map.put("result", "success");
+        	}else{
+        		map.put("result",expDecorateUserService.initSaveDecorateUser(entity));
+
+        	}
         }
         catch (Exception e)
         {

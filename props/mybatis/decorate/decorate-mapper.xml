@@ -28,7 +28,7 @@
 	
 	</resultMap>
 	
-	<select id="findDecorateById" parameterType="java.lang.String" resultMap="DecorateMap">
+	<select id="findDecorateById" parameterType="String" resultMap="DecorateMap">
 	   <![CDATA[
 		select * from t_exp_decorate t where 1=1  and t.id=#{id}
 		]]>
