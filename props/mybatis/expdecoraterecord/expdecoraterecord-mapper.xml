@@ -45,7 +45,6 @@
 				#{publishOpenid},
 				#{publishUserid},
 				#{acceptOpenid},
-				#{accptUserid},
 				#{state},
 				now(),
 				#{commissionPrice}
