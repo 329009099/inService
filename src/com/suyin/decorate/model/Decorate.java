@@ -97,11 +97,11 @@ public class Decorate  implements java.io.Serializable{
     /**
      * 随机金额开始数目       db_column: begin_money 
      */ 	
-	private java.lang.String beginMoney;
+	private BigDecimal beginMoney;
     /**
      * 随机金额结束数目       db_column: end_money 
      */ 	
-	private java.lang.String endMoney;
+	private BigDecimal endMoney;
 	/**
 	 * 参与人数
 	 */
@@ -237,19 +237,19 @@ public class Decorate  implements java.io.Serializable{
 	
 
 	
-    public java.lang.String getBeginMoney() {
+    public BigDecimal getBeginMoney() {
 		return beginMoney;
 	}
 
-	public void setBeginMoney(java.lang.String beginMoney) {
+	public void setBeginMoney(BigDecimal beginMoney) {
 		this.beginMoney = beginMoney;
 	}
 
-	public java.lang.String getEndMoney() {
+	public BigDecimal getEndMoney() {
 		return endMoney;
 	}
 
-	public void setEndMoney(java.lang.String endMoney) {
+	public void setEndMoney(BigDecimal endMoney) {
 		this.endMoney = endMoney;
 	}
 
