@@ -43,7 +43,6 @@
 		)
 		values(
 				#{publishOpenid},
-				#{publishUserid},
 				#{acceptOpenid},
 				#{state},
 				now(),
