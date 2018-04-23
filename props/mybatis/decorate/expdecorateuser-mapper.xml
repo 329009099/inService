@@ -23,16 +23,30 @@
 	<!-- 通过用户ID和openId查询用户信息 -->
 	<select id="findUserInfoByUserIdOrOpenId" parameterType="hashmap" resultMap="ExpDecorateUserMap">
 	   <![CDATA[
-		select * 
-		from t_exp_decorate_user 
-		where 
+		SELECT
+			t.user_id,
+			t.openid,
+			IFNULL(t.user_phone,"") AS user_phone,
+			t.nick_name,
+			IFNULL(t.user_name,"") AS user_name,
+			t.user_state,
+			t.count_price,
+			t.balance_price,
+			IFNULL(t.alipay_number,"" ) AS alipay_number,
+			IFNULL(t.`password`,"")AS password,
+			t.head_img,
+			IFNULL(t.iphone,"") AS iphone
+			
+		FROM
+			t_exp_decorate_user t
+		WHERE 
 		1=1
 		]]>
 		<if test="userId != null and userId != ''">
-			<![CDATA[ and user_id =#{userId} ]]>
+			<![CDATA[ and t.user_id =#{userId} ]]>
 		</if>
 		<if test="openId != null and openId != ''">
-			<![CDATA[ and openid =#{openId} ]]>
+			<![CDATA[ and t.openid =#{openId} ]]>
 		</if>
 	</select>
 	
