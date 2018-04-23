@@ -103,6 +103,17 @@ public class Decorate  implements java.io.Serializable{
      */ 	
 	private BigDecimal endMoney;
 	/**
+	 * 封顶金额
+	 */
+	private BigDecimal maxMoney;
+	/**
+	 * 
+	 * 提取开始金额
+	 */
+	private BigDecimal tqMoney;
+
+
+	/**
 	 * 参与人数
 	 */
 	private java.lang.Integer expUv;
@@ -336,5 +347,23 @@ public class Decorate  implements java.io.Serializable{
 	public void setSellerDescription(java.lang.String sellerDescription) {
 		this.sellerDescription = sellerDescription;
 	}
+
+	public BigDecimal getMaxMoney() {
+		return maxMoney;
+	}
+
+	public void setMaxMoney(BigDecimal maxMoney) {
+		this.maxMoney = maxMoney;
+	}
+
+	public BigDecimal getTqMoney() {
+		return tqMoney;
+	}
+
+	public void setTqMoney(BigDecimal tqMoney) {
+		this.tqMoney = tqMoney;
+	}
+	
+	
 }
 

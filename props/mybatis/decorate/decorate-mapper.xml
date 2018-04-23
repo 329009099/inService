@@ -21,6 +21,8 @@
 		<result column="active_img" property="activeImg"/>
 		<result column="begin_money" property="beginMoney"/>
 		<result column="end_money" property="endMoney"/>
+		<result column="max_money" property="maxMoney"/>
+		<result column="tq_money" property="tqMoney"/>
 		<result column="status" property="status"/>
 		<result column="exp_uv" property="expUv"/>
 		<result column="exp_pv" property="expPv"/>
