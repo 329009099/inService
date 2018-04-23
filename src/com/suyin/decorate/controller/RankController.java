@@ -24,7 +24,7 @@ import com.suyin.system.model.Page;
  *
  */
 @Controller
-@RequestMapping("/rank")
+@RequestMapping("/interfarank")
 public class RankController {
 
 	@Autowired
@@ -60,7 +60,6 @@ public class RankController {
 		ModelMap result = new ModelMap();
 		Map<String, Object> condition = new HashMap<String, Object>();
 		String expId=request.getParameter("id");//活动id
-		//condition.put("expId", expId);
 		Page page = new Page();
 		if (StringUtils.isNotBlank(request.getParameter("page.showCount"))) {
 			page.setShowCount(Integer.parseInt(request
