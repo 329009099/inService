@@ -1,3 +1,16 @@
 
 src/com/suyin/decorate/model/Decorate.java
 src/com/suyin/decorate/model/Decorate.java
+*.class
+*.class
+*.png
+*.jpg
+*.js
+*.css
+*.svg
+*.gif
+*.ttf
+*.woff
+*.eot
+*.class
+build/classes/mybatis/decorate/expdecorateuser-mapper.xml
