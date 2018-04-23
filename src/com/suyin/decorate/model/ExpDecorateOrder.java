@@ -50,11 +50,11 @@ public class ExpDecorateOrder  implements java.io.Serializable{
     /**
      * 创建时间       db_column: create_time 
      */ 	
-	private java.util.Date createTime;
+	private java.lang.String createTime;
     /**
      * 审核时间       db_column: review_time 
      */ 	
-	private java.util.Date reviewTime;
+	private java.lang.String reviewTime;
     /**
      * 审核人编号       db_column: review_user 
      */ 	
@@ -115,22 +115,24 @@ public class ExpDecorateOrder  implements java.io.Serializable{
 		this.state = value;
 	}
 	
-	public java.util.Date getCreateTime() {
-		return this.createTime;
-	}
 	
-	public void setCreateTime(java.util.Date value) {
-		this.createTime = value;
-	}
 	
-	public java.util.Date getReviewTime() {
-		return this.reviewTime;
+	public java.lang.String getCreateTime() {
+		return createTime;
 	}
-	
-	public void setReviewTime(java.util.Date value) {
-		this.reviewTime = value;
+
+	public void setCreateTime(java.lang.String createTime) {
+		this.createTime = createTime;
 	}
-	
+
+	public java.lang.String getReviewTime() {
+		return reviewTime;
+	}
+
+	public void setReviewTime(java.lang.String reviewTime) {
+		this.reviewTime = reviewTime;
+	}
+
 	public java.lang.String getReviewUser() {
 		return this.reviewUser;
 	}

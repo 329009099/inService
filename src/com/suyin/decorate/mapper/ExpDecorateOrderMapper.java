@@ -10,6 +10,13 @@ import com.suyin.decorate.model.ExpDecorateOrder;
 
 
 public interface ExpDecorateOrderMapper {
+	
+	/**
+	 * 根据openid查询用户提现记录
+	 * @param params
+	 * @return
+	 */
+	public List<ExpDecorateOrder>findUserOrderRecordByPage(Map<String,Object> params);
 
 	/**
 	 * 根据openid查询用户是否存在 还未审核通过的订单

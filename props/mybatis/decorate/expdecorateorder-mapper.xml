@@ -73,6 +73,25 @@
 			t.openid=#{openId}
 		]]>
 	</select>
+	<!-- 查询用户提现订单列表 -->
+	<select id="findUserOrderRecordByPage" parameterType="hashmap" resultMap="ExpDecorateOrderMap">
+	   <![CDATA[
+		SELECT
+			t.order_id,
+			date_format(t.create_time,'%Y-%m-%d %H:%i:%s') as create_time,
+			t.openid,
+			t.user_id,
+			t.withdraw_price,
+			t.state,
+			t.review_time
+		FROM
+			t_exp_decorate_order t
+		WHERE
+			1 = 1
+		AND 
+			t.openid=#{openid}
+		]]>
+	</select>
 	<!-- 查询信息列表 -->
 	<select id="findExpDecorateOrder" parameterType="com.suyin.decorate.model.ExpDecorateOrder" resultMap="ExpDecorateOrderMap">
 	   <![CDATA[
