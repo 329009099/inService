@@ -13,6 +13,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.suyin.decorate.model.ExpDecorateUser;
 import com.suyin.decorate.service.ExpDecorateUserService;
 import com.suyin.decorate.service.RankService;
 import com.suyin.system.model.Page;
@@ -31,11 +32,10 @@ public class RankController {
 	
 	@Autowired
 	private ExpDecorateUserService decorateRecordService;
-	/*
-	*//**
+	/**
 	 * 查找我的排名信息
 	 * @return
-	 *//*
+	 */
 	@RequestMapping("/findMyRankInfo")
 	public @ResponseBody ModelMap findMyRankInfo(HttpServletRequest request) {
 		
@@ -47,7 +47,7 @@ public class RankController {
 		result.put("rankNumber", rankNumber);
 		result.put("expDecorateUser", expDecorateUser);
 		return result;
-	}*/
+	}
 	
 	/**
 	 * 查找整体排名信息

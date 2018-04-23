@@ -15,12 +15,11 @@ public class RankServiceImpl implements RankService {
 	@Autowired
 	private RankMapper rankMapper;
 
-/*	@Override
+	@Override
 	public Integer getMyRankInfo(String openId) {
-		// TODO Auto-generated method stub
-		return null;
+		return rankMapper.getMyRankInfo(openId);
 	}
-*/
+
 	@Override
 	public List<Map<String, Object>> findAllRankInfo(Map<String, Object> condition) {
 		return this.rankMapper.findAllRanListByPage(condition);

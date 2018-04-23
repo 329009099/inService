@@ -3,16 +3,29 @@
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.suyin.decorate.mapper.RankMapper">
 	
-<!-- 	<select id="getMyRankInfo" parameterType="String" resultType="Integer">
-	   <![CDATA[
-		select * from t_exp_decorate t where 1=1  and t.id=#{id}
-		]]>
-	</select> -->
-	
-<!-- 	
-	<select id="findAllRanListByPage" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+	<!-- 查询排名 -->
+	<select id="getMyRankInfo" parameterType="String" resultType="Integer">
 	   <![CDATA[
 		SELECT
+			count(t.openid) + 1 AS rankNum
+		FROM
+			t_exp_decorate_user t
+		WHERE
+			t.count_price > (
+				SELECT
+					t_exp_decorate_user.count_price
+				FROM
+					t_exp_decorate_user
+				WHERE
+					openid = #{openid}
+				)
+		]]>
+	</select>
+	
+	<!-- map 方式 -->
+	<select id="findAllRanListByPage"  resultType="java.util.HashMap" parameterType="java.util.HashMap">
+	<![CDATA[
+		SELECT	
 			@rownum:=@rownum+1 as rankNum,
   			IFNULL(t.user_phone,"****") as user_phone,
 			t.openid,
@@ -22,22 +35,6 @@
 			t.head_img
 		FROM
 			t_exp_decorate_user t ,(SELECT @rownum:=0) r
-		ORDER BY t.count_price DESC
-		]]>
-	</select> -->
-	
-	<!-- map 方式 -->
-	<select id="findAllRanListByPage"  resultType="java.util.HashMap" parameterType="java.util.HashMap">
-	<![CDATA[
-		SELECT	
-  			IFNULL(t.user_phone,"****") as user_phone,
-			t.openid,
-			t.nick_name,
-			t.count_price,
-			t.balance_price,
-			t.head_img
-		FROM
-			t_exp_decorate_user t
 		ORDER BY t.count_price DESC
 		]]>
 	</select>

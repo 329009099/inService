@@ -34,7 +34,7 @@
 			t.balance_price,
 			IFNULL(t.alipay_number,"" ) AS alipay_number,
 			IFNULL(t.`password`,"")AS password,
-			t.head_img,
+			t.head_img as headImg,
 			IFNULL(t.iphone,"") AS iphone
 			
 		FROM

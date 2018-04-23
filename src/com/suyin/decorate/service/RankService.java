@@ -10,7 +10,7 @@ public interface RankService {
 	 * @param openId
 	 * @return
 	 */
-	/*public Integer getMyRankInfo(String openId);*/
+	public Integer getMyRankInfo(String openId);
 	
 	/**
 	 * 

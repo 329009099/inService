@@ -5,12 +5,12 @@ import java.util.Map;
 
 public interface RankMapper {
 
-/*	*//**
+    /**
 	 * 通过openid查询排名
 	 * @param openId
 	 * @return
-	 *//*
-	public Integer getMyRankInfo(String openId);*/
+	 */
+	public Integer getMyRankInfo(String openId);
 	
 	/**
 	 * 获取所有排名列表
