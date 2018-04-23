@@ -60,7 +60,7 @@ public class ExpDecorateUserServiceImpl implements ExpDecorateUserService{
 		params.put("state","0");//未审核状态
 		params.put("openId", entity.getOpenid());
 		//根据openid查询用户是否存在还未审核通过的提现订单，提现审核通过后才可以创建，提交新的订单
-		ExpDecorateUser isDecorateUser=expDecorateUserMapper.findUserInfoByUserIdOrOpenId(params);
+		ExpDecorateOrder isDecorateUser=expDecorateOrderMapper.findUserIsReviewOrderInfo(params);
 		if(null!=isDecorateUser){
 				//未审核通过标识
 				result.put("message", "notaudit");
