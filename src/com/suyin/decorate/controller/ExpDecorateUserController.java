@@ -25,7 +25,7 @@ import com.suyin.system.util.Tools;
 
 
 @Controller
-@RequestMapping("/expdecorateuser")
+@RequestMapping("/inexpdecorateuser")
 public class ExpDecorateUserController{
 
     private final static Logger log=Logger.getLogger(ExpDecorateUserController.class);
