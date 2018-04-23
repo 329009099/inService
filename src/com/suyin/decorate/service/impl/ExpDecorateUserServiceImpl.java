@@ -82,7 +82,6 @@ public class ExpDecorateUserServiceImpl implements ExpDecorateUserService{
 						double reckonPrice= Utils.subUserPrice(balancePrice.doubleValue(), withdrawPriceValue.doubleValue());					
 						//创建提现订单信息
 						ExpDecorateOrder expDecorateOrder = new ExpDecorateOrder();
-						expDecorateOrder.setCreateTime(new Date());
 						expDecorateOrder.setOpenid(expDecorateUser.getOpenid());
 						expDecorateOrder.setUserId(expDecorateUser.getUserId());
 						expDecorateOrder.setState(0);
