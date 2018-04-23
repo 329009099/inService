@@ -1,11 +1,13 @@
 
 package com.suyin.decorate.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.suyin.decorate.model.ExpDecorateOrder;
 import com.suyin.decorate.model.ExpDecorateUser;
 import com.suyin.decorate.service.ExpDecorateUserService;
 import com.suyin.system.model.Page;
@@ -29,6 +32,37 @@ public class ExpDecorateUserController{
     @Autowired
     private ExpDecorateUserService expDecorateUserService;
     
+    
+	/**
+	 * 查询我的邀请
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value="/findOrderRecord")
+	public @ResponseBody Map<String,Object>findOrderRecordByPage(HttpServletRequest request){
+		 ModelMap result=new ModelMap();
+	        Map<String,Object> condition=new HashMap<String, Object>();
+	        String openid=request.getParameter("openid");
+	
+	        Page page=new Page();
+	        if(StringUtils.isNotBlank(request.getParameter("page.showCount"))) 
+	            page.setShowCount(Integer.parseInt(request.getParameter("page.showCount")));
+	        if(StringUtils.isNotBlank(request.getParameter("page.currentPage")))
+	            page.setCurrentPage(Integer.parseInt(request.getParameter("page.currentPage")));
+	        condition.put("page", page); 
+	        condition.put("openid", openid);
+	        result.put("args", condition);
+			List<ExpDecorateOrder> list=expDecorateUserService.findUserOrderRecordByPage(condition);	
+			if(list.size()<1){
+	            result.put("message", "error");
+	        }else {
+	            result.put("data", list);
+	            result.put("message", "success");
+	       
+	        }
+
+		return result;
+	}
     /**
      * 新增或修改信息
      * @param entity

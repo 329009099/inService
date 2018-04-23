@@ -3,12 +3,14 @@ package com.suyin.decorate.service;
 import java.util.List;
 import java.util.Map;
 
+import com.suyin.decorate.model.ExpDecorateOrder;
 import com.suyin.decorate.model.ExpDecorateUser;
 
 
 
 
 public interface ExpDecorateUserService{
+	public List<ExpDecorateOrder>findUserOrderRecordByPage(Map<String,Object> params);
 	/**
 	 * 通过用户ID和openId查询用户信息
 	 * @param userId

@@ -266,4 +266,12 @@ public class ExpDecorateUserServiceImpl implements ExpDecorateUserService{
 
 		}
 	}
+
+
+	@Override
+	public List<ExpDecorateOrder> findUserOrderRecordByPage(
+			Map<String, Object> params) {
+		// TODO Auto-generated method stub
+		return expDecorateOrderMapper.findUserOrderRecordByPage(params);
+	}
 }
