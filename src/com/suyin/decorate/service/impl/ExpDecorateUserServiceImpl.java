@@ -73,10 +73,11 @@ public class ExpDecorateUserServiceImpl implements ExpDecorateUserService{
 					BigDecimal balancePrice = expDecorateUser.getBalancePrice();	
 					//本次提现金额
 					DecimalFormat df= new DecimalFormat("######0.00");
-					String commission= df.format(withdrawPrice);			
+					double convertPrice=Double.parseDouble(withdrawPrice);
+					String commission= df.format(convertPrice);			
 					BigDecimal withdrawPriceValue = new BigDecimal(commission);				
 					//判断余额是否大于当前提现金额
-					if(balancePrice.compareTo(withdrawPriceValue)>0){
+					if(balancePrice.compareTo(withdrawPriceValue)>=0){
 						//相减金额，当前金额-提现金额=现在金额
 						double reckonPrice= Utils.subUserPrice(balancePrice.doubleValue(), withdrawPriceValue.doubleValue());					
 						//创建提现订单信息
@@ -256,10 +257,10 @@ public class ExpDecorateUserServiceImpl implements ExpDecorateUserService{
 
 	public static void main(String[] args) {
 		//用户余额
-		BigDecimal balancePrice =new BigDecimal(0.29);	
+		BigDecimal balancePrice =new BigDecimal(0.2);	
 		//本次提现金额		
 		BigDecimal withdrawPriceValue = new BigDecimal(0.29);
-		if(balancePrice.compareTo(withdrawPriceValue)>0){
+		if(balancePrice.compareTo(withdrawPriceValue)>=0){
 			System.out.println("大于");
 		}else{
 			System.out.println("不大于");
