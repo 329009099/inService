@@ -60,7 +60,7 @@ public class ExpDecorateUserServiceImpl implements ExpDecorateUserService{
 		params.put("state","0");//未审核状态
 		params.put("openId", entity.getOpenid());
 		//根据openid查询用户是否存在还未审核通过的提现订单，提现审核通过后才可以创建，提交新的订单
-		ExpDecorateUser isDecorateUser=expDecorateUserMapper.findUserInfoByUserIdOrOpenId(params);
+		ExpDecorateOrder isDecorateUser=expDecorateOrderMapper.findUserIsReviewOrderInfo(params);
 		if(null!=isDecorateUser){
 				//未审核通过标识
 				result.put("message", "notaudit");
@@ -73,10 +73,11 @@ public class ExpDecorateUserServiceImpl implements ExpDecorateUserService{
 					BigDecimal balancePrice = expDecorateUser.getBalancePrice();	
 					//本次提现金额
 					DecimalFormat df= new DecimalFormat("######0.00");
-					String commission= df.format(withdrawPrice);			
+					double convertPrice=Double.parseDouble(withdrawPrice);
+					String commission= df.format(convertPrice);			
 					BigDecimal withdrawPriceValue = new BigDecimal(commission);				
 					//判断余额是否大于当前提现金额
-					if(balancePrice.compareTo(withdrawPriceValue)>0){
+					if(balancePrice.compareTo(withdrawPriceValue)>=0){
 						//相减金额，当前金额-提现金额=现在金额
 						double reckonPrice= Utils.subUserPrice(balancePrice.doubleValue(), withdrawPriceValue.doubleValue());					
 						//创建提现订单信息
@@ -256,10 +257,10 @@ public class ExpDecorateUserServiceImpl implements ExpDecorateUserService{
 
 	public static void main(String[] args) {
 		//用户余额
-		BigDecimal balancePrice =new BigDecimal(0.29);	
+		BigDecimal balancePrice =new BigDecimal(0.2);	
 		//本次提现金额		
 		BigDecimal withdrawPriceValue = new BigDecimal(0.29);
-		if(balancePrice.compareTo(withdrawPriceValue)>0){
+		if(balancePrice.compareTo(withdrawPriceValue)>=0){
 			System.out.println("大于");
 		}else{
 			System.out.println("不大于");
