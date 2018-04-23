@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.suyin.common.ImageHandleHelper;
 import com.suyin.common.QrCodeWriterUtils;
 import com.suyin.common.Utils;
+import com.suyin.common.model.CoinLog;
+import com.suyin.common.service.CoinLogService;
 import com.suyin.decorate.model.Decorate;
 import com.suyin.decorate.model.ExpDecorateUser;
 import com.suyin.decorate.service.DecorateService;
@@ -107,8 +109,7 @@ public class CreateQrcodeController {
 					entity.setAcceptOpenid(accptopenid);
 					entity.setState(1);
 					entity.setCommissionPrice(commission);//本次生成的佣金金额
-					expDecorateRecordService.addExpDecorateRecord(entity);
-
+					expDecorateRecordService.addExpDecorateRecord(entity);		
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					log.error("金额转换失败....",e);

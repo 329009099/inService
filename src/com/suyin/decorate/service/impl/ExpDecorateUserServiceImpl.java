@@ -139,6 +139,7 @@ public class ExpDecorateUserServiceImpl implements ExpDecorateUserService{
     		if(entity==null){	
     			return result;
     		}else{
+    			//查询用户总额是否封顶,封顶则不能继续
     			result = expDecorateUserMapper.updateBalancePriceByOpendId(entity);
     		}
     	} catch (Exception e) {
