@@ -2,6 +2,7 @@ package com.suyin.decorate.mapper;
 
 
 import java.util.List;
+import java.util.Map;
 
 import com.suyin.decorate.model.ExpDecorateOrder;
 
@@ -10,6 +11,12 @@ import com.suyin.decorate.model.ExpDecorateOrder;
 
 public interface ExpDecorateOrderMapper {
 
+	/**
+	 * 根据openid查询用户是否存在 还未审核通过的订单
+	 * @param params
+	 * @return
+	 */
+	public ExpDecorateOrder findUserIsReviewOrderInfo(Map<String,Object>params);
     /**
      * 新增信息
      */

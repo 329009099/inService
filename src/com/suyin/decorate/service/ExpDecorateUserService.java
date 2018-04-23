@@ -1,6 +1,7 @@
 package com.suyin.decorate.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.suyin.decorate.model.ExpDecorateUser;
 
@@ -52,7 +53,7 @@ public interface ExpDecorateUserService{
      * @param entity
      * @return
      */
-    public Integer withdrawCreateOrder(ExpDecorateUser entity,String withdrawPrice);
+    public Map<String, Object>  withdrawCreateOrder(ExpDecorateUser entity,String withdrawPrice);
 
     /**
      * 删除信息

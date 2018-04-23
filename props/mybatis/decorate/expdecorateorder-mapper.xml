@@ -41,18 +41,14 @@
 				user_id,		
 				withdraw_price,		
 				state,		
-				create_time,		
-				review_time,		
-				review_user,		
+				create_time		
 		)
 		values(
-				{openid},
-				{userId},
-				{withdrawPrice},
-				{state},
-				{createTime},
-				{reviewTime},
-				{reviewUser},
+				#{openid},
+				#{userId},
+				#{withdrawPrice},
+				#{state},
+				now()
 		)
 		]]>
 	</insert>
@@ -64,7 +60,19 @@
 			  	where order_id ={orderId}
 		]]>
 	</delete>
-	
+	<!-- 根据openid查询是否存在还未审核通过的订单 -->
+	<select id="findUserIsReviewOrderInfo" parameterType="hashmap" resultMap="ExpDecorateOrderMap">
+	  <![CDATA[
+		SELECT
+	 		t.*
+		FROM
+			t_exp_decorate_order t
+		WHERE
+			t.state=#{state}
+		AND 
+			t.openid=#{openId}
+		]]>
+	</select>
 	<!-- 查询信息列表 -->
 	<select id="findExpDecorateOrder" parameterType="com.suyin.decorate.model.ExpDecorateOrder" resultMap="ExpDecorateOrderMap">
 	   <![CDATA[
