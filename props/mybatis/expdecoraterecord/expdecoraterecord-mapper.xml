@@ -63,7 +63,7 @@
 		<![CDATA[
 			SELECT
 				t.accept_openid,
-				t.create_time,
+				date_format(t.create_time,'%Y-%m-%d %H:%i:%s') as create_time,
 				t.commission_price,
 				 u.nick_name,
 				u.head_img
