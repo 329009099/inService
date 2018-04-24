@@ -10,13 +10,9 @@ import org.springframework.ui.ModelMap;
 
 public class Utils {
 	public static void main(String[] args) throws Exception {
-        double max = 0.08;
-        double min = 1.08;
-        DecimalFormat    df   = new DecimalFormat("######0.00");
-        for (int i = 0; i < 10; i++) {
-            System.out.println(df.format(Utils.nextDouble(min - 1, max + 1)));
-		}
-
+        double max = 0.01;
+        double min = 0.00;  
+        System.out.println(Utils.addUserPrice(max,min));		
     }
 	/**  
 	 * 提供精确的加法运算。  
