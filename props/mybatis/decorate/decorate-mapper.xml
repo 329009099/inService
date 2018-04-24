@@ -49,7 +49,7 @@
 				t.tq_money,
 				t.count_price,
 				t.title,
-				t.`status`,
+				t.status,
 				date_format(t.begin_time,'%Y-%m-%d %H:%i:%s') as begin_time,
 				date_format(t.end_time,'%Y-%m-%d %H:%i:%s') as end_time,
 				CASE 
