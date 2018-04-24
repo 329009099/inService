@@ -111,8 +111,6 @@ public class Decorate  implements java.io.Serializable{
 	 * 提取开始金额
 	 */
 	private BigDecimal tqMoney;
-
-
 	/**
 	 * 参与人数
 	 */
@@ -125,6 +123,13 @@ public class Decorate  implements java.io.Serializable{
 	 * 累积金额
 	 */
 	private BigDecimal countPrice;
+	/**
+	 * 是否在活动期内
+	 * 0:为开始
+	 * 1:开始
+	 * 2:已结束
+	 */
+	private int isActDate;
 	//columns end
 
 
@@ -362,6 +367,14 @@ public class Decorate  implements java.io.Serializable{
 
 	public void setTqMoney(BigDecimal tqMoney) {
 		this.tqMoney = tqMoney;
+	}
+
+	public int getIsActDate() {
+		return isActDate;
+	}
+
+	public void setIsActDate(int isActDate) {
+		this.isActDate = isActDate;
 	}
 	
 	
