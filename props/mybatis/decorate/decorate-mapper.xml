@@ -35,6 +35,7 @@
 	   <![CDATA[
 		   SELECT
 				t.seller_description,
+				t.description,
 				t.active_img,
 				t.id,
 				t.`name`,
@@ -47,6 +48,10 @@
 				t.max_money,
 				t.tq_money,
 				t.count_price,
+				t.title,
+				t.`status`,
+				date_format(t.begin_time,'%Y-%m-%d %H:%i:%s') as begin_time,
+				date_format(t.end_time,'%Y-%m-%d %H:%i:%s') as end_time,
 				CASE 
 					WHEN now()>t.begin_time and now()<t.end_time THEN '1'
 					WHEN now()<t.begin_time THEN '0'
@@ -55,7 +60,8 @@
 			FROM
 				t_exp_decorate t
 			WHERE
-				1 = 1
+			1=1
+
 			AND t.id =#{id}			
 		]]>
 	</select>
