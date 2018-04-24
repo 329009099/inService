@@ -68,48 +68,50 @@ public class CreateQrcodeController {
 		//根据活动id查询活动信息
 		Decorate decorate=decorateService.findDecorateById(id);
 		result.put("decorate", decorate);
-		//变更发起用户的佣金
-		//判断发起者和接受者二者是否为同一id，是不进行操作，反之进行增加
-		if(!publishopenid.equals(accptopenid)){
-			//查询当前受邀者是否已经查看过，发起者的二维码，或点击过连接，不可进行二次佣金增长
-			//根据 发起者和接收者 openid 查询是否存在，已经有记录，则不能继续，无记录的情况下，正常记录
-			Map<String,Object>params=new HashMap<String,Object>();
-			params.put("publishopenid", publishopenid);
-			params.put("accptopenid", accptopenid);
-			ExpDecorateRecord exRecord=expDecorateRecordService.findExpRecordByPublisAndReviewOpenid(params);
-			if(null!=exRecord){
-				log.debug("当前用户已经，被邀请过，无法再次邀请..");
-			}else{
-				try {
-					DecimalFormat df= new DecimalFormat("######0.00");	
-			
-					//随机金额区间，记录本次佣金金额
-					double  randomPrice=Utils.nextDouble(decorate.getBeginMoney().doubleValue(), decorate.getEndMoney().doubleValue());
-					//检查总收益是否到达，封顶金额小于等于0时 
-					double allowPrice=Utils.subUserPrice(decorate.getMaxMoney().doubleValue(), decorateUser.getCountPrice().doubleValue());
-					try{
-						//表示还未达到封顶金额
-						if(allowPrice>0 && allowPrice>randomPrice){
-							//如果达到封顶金额，将直接保存差值
-							String commission= df.format(randomPrice);	
-							this.crateMoney(decorateUser, publishopenid, accptopenid, commission);
-						}else{
-							//如果达到封顶金额，将直接保存差值						
-							String commission= df.format(allowPrice);
-							this.crateMoney(decorateUser, publishopenid, accptopenid, commission);
+		//活动时间:0 :未开始，1:进行中，2:已结束(活动状态), status 活动状态
+		if(1==decorate.getIsActDate() && 1==decorate.getStatus()){		
+			//变更发起用户的佣金
+			//判断发起者和接受者二者是否为同一id，是不进行操作，反之进行增加
+			if(!publishopenid.equals(accptopenid)){
+				//查询当前受邀者是否已经查看过，发起者的二维码，或点击过连接，不可进行二次佣金增长
+				//根据 发起者和接收者 openid 查询是否存在，已经有记录，则不能继续，无记录的情况下，正常记录
+				Map<String,Object>params=new HashMap<String,Object>();
+				params.put("publishopenid", publishopenid);
+				params.put("accptopenid", accptopenid);
+				ExpDecorateRecord exRecord=expDecorateRecordService.findExpRecordByPublisAndReviewOpenid(params);
+				if(null!=exRecord){
+					log.debug("当前用户已经，被邀请过，无法再次邀请..");
+				}else{
+					try {
 						
+						DecimalFormat df= new DecimalFormat("######0.00");	
+						//随机金额区间，记录本次佣金金额
+						double  randomPrice=Utils.nextDouble(decorate.getBeginMoney().doubleValue(), decorate.getEndMoney().doubleValue());
+						//检查总收益是否到达，封顶金额小于等于0时 
+						double allowPrice=Utils.subUserPrice(decorate.getMaxMoney().doubleValue(), decorateUser.getCountPrice().doubleValue());
+						try{
+							//表示还未达到封顶金额
+							if(allowPrice>0 && allowPrice>randomPrice){
+								//如果达到封顶金额，将直接保存差值
+								String commission= df.format(randomPrice);	
+								this.crateMoney(decorateUser, publishopenid, accptopenid, commission);
+							}else{
+								//如果达到封顶金额，将直接保存差值						
+								String commission= df.format(allowPrice);
+								this.crateMoney(decorateUser, publishopenid, accptopenid, commission);
+	
+							}
+						}catch(Exception ex){						
+							log.error("增加佣金失败，写入订单失败....",ex);
 						}
-					}catch(Exception ex){						
-						log.error("增加佣金失败，写入订单失败....",ex);
+	
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						log.error("金额转换失败....",e);
 					}
-										
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					log.error("金额转换失败....",e);
 				}
-			}
+			}	
 		}
-
 		return result;
 	}
 
@@ -133,7 +135,7 @@ public class CreateQrcodeController {
 		//总额
 		double commissionCountPrice=Utils.addUserPrice(countzv1,v2);//前往更新金额
 		BigDecimal countprice=new BigDecimal(commissionCountPrice);					
-	
+
 		//调用更新user账户方法，根据openid 更新余额
 		ExpDecorateUser usereEntity=new ExpDecorateUser();
 		usereEntity.setOpenid(publishopenid);
@@ -148,7 +150,7 @@ public class CreateQrcodeController {
 		entity.setState(1);
 		entity.setCommissionPrice(commission);//本次生成的佣金金额
 		expDecorateRecordService.addExpDecorateRecord(entity);
-		
+
 	}
 
 	/**
@@ -216,7 +218,7 @@ public class CreateQrcodeController {
 				double  randomPrice=Utils.nextDouble(min, max);
 				System.out.println(randomPrice);
 			}
-	
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
