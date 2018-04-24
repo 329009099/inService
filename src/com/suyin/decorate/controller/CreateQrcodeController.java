@@ -81,35 +81,28 @@ public class CreateQrcodeController {
 				log.debug("当前用户已经，被邀请过，无法再次邀请..");
 			}else{
 				try {
+					DecimalFormat df= new DecimalFormat("######0.00");	
+			
 					//随机金额区间，记录本次佣金金额
 					double  randomPrice=Utils.nextDouble(decorate.getBeginMoney().doubleValue(), decorate.getEndMoney().doubleValue());
-					DecimalFormat df= new DecimalFormat("######0.00");
-					String commission= df.format(randomPrice);
-					//最终记录的佣金，保留2位小数点
-					//开始变更发起者佣金账户 减少余额
-					double banlanzv1=decorateUser.getBalancePrice().doubleValue(); //加数
-					double countzv1=decorateUser.getCountPrice().doubleValue();//总额加数
-					double v2=Double.parseDouble(commission);//被加数
-					//余额
-					double commissionbanlanPrice=Utils.addUserPrice(banlanzv1, v2);//前往更新金额
-					BigDecimal banlanprice=new BigDecimal(commissionbanlanPrice);
-					//总额
-					double commissionCountPrice=Utils.addUserPrice(countzv1,v2);//前往更新金额
-					BigDecimal countprice=new BigDecimal(commissionCountPrice);
-					//调用更新user账户方法，根据openid 更新余额
-					ExpDecorateUser usereEntity=new ExpDecorateUser();
-					usereEntity.setOpenid(publishopenid);
-					usereEntity.setBalancePrice(banlanprice);
-					usereEntity.setCountPrice(countprice);
-					expDecorateUserService.updateBalancePriceByOpendId(usereEntity);
-
-					//向t_exp_decorate_record表中插入记录，记录详细，用于用户的钱包中的金额详细展示
-					ExpDecorateRecord entity=new ExpDecorateRecord();
-					entity.setPublishOpenid(publishopenid);
-					entity.setAcceptOpenid(accptopenid);
-					entity.setState(1);
-					entity.setCommissionPrice(commission);//本次生成的佣金金额
-					expDecorateRecordService.addExpDecorateRecord(entity);		
+					//检查总收益是否到达，封顶金额小于等于0时 
+					double allowPrice=Utils.subUserPrice(decorate.getMaxMoney().doubleValue(), decorateUser.getCountPrice().doubleValue());
+					try{
+						//表示还未达到封顶金额
+						if(allowPrice>0 && allowPrice>randomPrice){
+							//如果达到封顶金额，将直接保存差值
+							String commission= df.format(randomPrice);	
+							this.crateMoney(decorateUser, publishopenid, accptopenid, commission);
+						}else{
+							//如果达到封顶金额，将直接保存差值						
+							String commission= df.format(allowPrice);
+							this.crateMoney(decorateUser, publishopenid, accptopenid, commission);
+						
+						}
+					}catch(Exception ex){						
+						log.error("增加佣金失败，写入订单失败....",ex);
+					}
+										
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					log.error("金额转换失败....",e);
@@ -120,6 +113,43 @@ public class CreateQrcodeController {
 		return result;
 	}
 
+	/**
+	 * 创建用户金额
+	 * 创建金额增加记录
+	 * @param decorateUser
+	 * @param publishopenid
+	 * @param accptopenid
+	 * @param commission
+	 */
+	private  void  crateMoney(ExpDecorateUser decorateUser,String publishopenid,String accptopenid,String commission){
+		//最终记录的佣金，保留2位小数点
+		//开始变更发起者佣金账户 减少余额
+		double banlanzv1=decorateUser.getBalancePrice().doubleValue(); //加数
+		double countzv1=decorateUser.getCountPrice().doubleValue();//总额加数
+		double v2=Double.parseDouble(commission);//被加数
+		//余额
+		double commissionbanlanPrice=Utils.addUserPrice(banlanzv1, v2);//前往更新金额
+		BigDecimal banlanprice=new BigDecimal(commissionbanlanPrice);
+		//总额
+		double commissionCountPrice=Utils.addUserPrice(countzv1,v2);//前往更新金额
+		BigDecimal countprice=new BigDecimal(commissionCountPrice);					
+	
+		//调用更新user账户方法，根据openid 更新余额
+		ExpDecorateUser usereEntity=new ExpDecorateUser();
+		usereEntity.setOpenid(publishopenid);
+		usereEntity.setBalancePrice(banlanprice);
+		usereEntity.setCountPrice(countprice);
+		expDecorateUserService.updateBalancePriceByOpendId(usereEntity);
+
+		//向t_exp_decorate_record表中插入记录，记录详细，用于用户的钱包中的金额详细展示
+		ExpDecorateRecord entity=new ExpDecorateRecord();
+		entity.setPublishOpenid(publishopenid);
+		entity.setAcceptOpenid(accptopenid);
+		entity.setState(1);
+		entity.setCommissionPrice(commission);//本次生成的佣金金额
+		expDecorateRecordService.addExpDecorateRecord(entity);
+		
+	}
 
 	/**
 	 * 创建海报二维码合成
