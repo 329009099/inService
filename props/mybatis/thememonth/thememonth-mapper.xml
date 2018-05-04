@@ -20,20 +20,23 @@
 	<!-- 查询主题月信息列表 -->
 	<select id="findThemeMonth" parameterType="java.util.HashMap"  resultType="java.util.HashMap">
 	   <![CDATA[
-		select
-	 		theme_id,
-	 		theme_title,
-	 		theme_logo,
-	 		theme_pic,
-	 		color,
-	 		months,
-	 		bottom_pic
-	 	from
-	 		t_theme_month
-	 	where
-	 		DATE_FORMAT(now(),'%y%m') = DATE_FORMAT(months,'%y%m')
-	 	limit 1
+		SELECT
+			theme_id,
+			theme_title,
+			theme_logo,
+			theme_pic,
+			color,
+			months,
+			bottom_pic
+		FROM
+			t_theme_month
+		WHERE
+			1 = 1
+		ORDER BY
+			create_time DESC
+		LIMIT 1
 		]]>
+		<!-- DATE_FORMAT(now(),'%y%m') = DATE_FORMAT(months,'%y%m') -->
 	</select>
 	
 </mapper>	
