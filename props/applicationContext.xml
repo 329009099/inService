@@ -44,10 +44,6 @@
 	
 	 <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver"/>
-<!-- 		<property name="username" value="user_smh"/> -->
-<!-- 		<property name="password" value="smh1536"/> -->
-<!-- 		<property name="url" value="jdbc:mysql://202.102.89.205:3306/db_dfwb?Unicode=true&amp;characterEncoding=UTF-8"/> -->
-
 		<property name="username" value="root"/>
 		<property name="password" value="root"/>
 		<property name="url" value="jdbc:mysql://127.0.0.1:3306/db_no?Unicode=true&amp;characterEncoding=UTF-8"/>
