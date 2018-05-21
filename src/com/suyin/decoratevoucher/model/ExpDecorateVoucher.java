@@ -81,6 +81,14 @@ public class ExpDecorateVoucher  implements java.io.Serializable{
 	
 	private java.lang.String voucheUrl;
 	
+	/**
+	 * 券总数
+	 */
+	private java.lang.Integer num;
+	/**
+	 * 已领取券数
+	 */
+	private java.lang.Integer remNum;
 	//columns end
 
 
@@ -205,6 +213,22 @@ public class ExpDecorateVoucher  implements java.io.Serializable{
 
 	public void setVoucheUrl(java.lang.String voucheUrl) {
 		this.voucheUrl = voucheUrl;
+	}
+
+	public java.lang.Integer getNum() {
+		return num;
+	}
+
+	public void setNum(java.lang.Integer num) {
+		this.num = num;
+	}
+
+	public java.lang.Integer getRemNum() {
+		return remNum;
+	}
+
+	public void setRemNum(java.lang.Integer remNum) {
+		this.remNum = remNum;
 	}
 
 	public String toString() {

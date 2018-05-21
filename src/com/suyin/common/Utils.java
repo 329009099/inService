@@ -14,6 +14,21 @@ public class Utils {
         double min = 0.00;  
         System.out.println(Utils.addUserPrice(max,min));		
     }
+	/**
+	 * 获取随机字符
+	 * @param length
+	 * @return
+	 */
+    public static String getRandomString(int length){
+        StringBuffer buffer=new StringBuffer("0123456789");
+        StringBuffer sb=new StringBuffer();
+        Random r=new Random();
+        int range=buffer.length();
+        for(int i=0;i<length;i++){
+            sb.append(buffer.charAt(r.nextInt(range)));
+        }
+        return sb.toString();
+    }
 	/**  
 	 * 提供精确的加法运算。  
 	 * @param v1 被加数  
