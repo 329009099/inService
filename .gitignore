@@ -14,3 +14,11 @@ src/com/suyin/decorate/model/Decorate.java
 *.eot
 *.class
 build/classes/mybatis/decorate/expdecorateuser-mapper.xml
+*.class
+*.class
+*.xml
+*.properties
+build/classes/com/suyin/server/service/impl/ClientTokenServiceImpl.class
+*.class
+*.xml
+build/classes/applicationContext.xml
