@@ -10,6 +10,13 @@ import com.suyin.decoratevoucher.service.*;
 
 
 public interface ExpDecorateVoucherMapper {
+	
+	/**
+	 * 根据OPENID查询我的券
+	 * @param decorateUserVoucher
+	 * @return
+	 */
+	List<ExpDecorateUserVoucher>findExpDecorateUserVoucherByPage(Map<String,Object> condition);
 	/**
 	 * 根据ID查询对象
 	 * @param id

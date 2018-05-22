@@ -54,4 +54,11 @@ public class ExpDecorateVoucherServiceImpl implements ExpDecorateVoucherService{
 		// TODO Auto-generated method stub
 		return ExpDecorateVoucherMapper.findDetial(id);
 	}
+
+	@Override
+	public List<ExpDecorateUserVoucher> findExpDecorateUserVoucherByPage(
+			Map<String,Object> condition) {
+		// TODO Auto-generated method stub
+		return ExpDecorateVoucherMapper.findExpDecorateUserVoucherByPage(condition);
+	}
 }

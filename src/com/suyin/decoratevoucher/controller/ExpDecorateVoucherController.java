@@ -54,6 +54,38 @@ public class ExpDecorateVoucherController{
     private ExpDecorateVoucherService expDecorateVoucherService;
    
     /**
+     * 根据用户OPENID查询我的券
+     * @param request
+     * @return
+     */
+   @RequestMapping("/findByUserVoucherList")
+   public @ResponseBody ModelMap findByUserVoucherList(HttpServletRequest request){
+	   ModelMap result=new ModelMap();
+       Map<String,Object> condition=new HashMap<String, Object>();
+       String openId=request.getParameter("openid");
+       String state=request.getParameter("state");
+       Page page=new Page();
+       if(StringUtils.isNotBlank(request.getParameter("page.showCount"))) 
+           page.setShowCount(Integer.parseInt(request.getParameter("page.showCount")));
+       if(StringUtils.isNotBlank(request.getParameter("page.currentPage")))
+           page.setCurrentPage(Integer.parseInt(request.getParameter("page.currentPage")));
+       condition.put("page", page); 
+       condition.put("openId", openId);
+       condition.put("state", state);
+       result.put("args", condition);
+		List<ExpDecorateUserVoucher> list=expDecorateVoucherService.findExpDecorateUserVoucherByPage(condition);	
+		if(list.size()<1){
+           result.put("message", "error");
+       }else {
+           result.put("data", list);
+           result.put("message", "success");
+      
+       }
+
+	return result;
+   }
+    
+    /**
      * 查询详情
      * @return
      */
