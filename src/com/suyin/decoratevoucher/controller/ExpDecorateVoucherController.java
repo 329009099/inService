@@ -70,7 +70,7 @@ public class ExpDecorateVoucherController{
        if(StringUtils.isNotBlank(request.getParameter("page.currentPage")))
            page.setCurrentPage(Integer.parseInt(request.getParameter("page.currentPage")));
        condition.put("page", page); 
-       condition.put("openId", openId);
+       condition.put("openid", openId);
        condition.put("state", state);
        result.put("args", condition);
 		List<ExpDecorateUserVoucher> list=expDecorateVoucherService.findExpDecorateUserVoucherByPage(condition);	
