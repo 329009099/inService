@@ -15,9 +15,9 @@
 		<result column="count_price" property="countPrice"/>
 		<result column="balance_price" property="balancePrice"/>
 		<result column="alipay_number" property="alipayNumber"/>
-		<result column="iphone" property="iphone"/>
 		<result column="password" property="password"/>
-	
+		<result column="is_sign" property="isSign"/>
+		<result column="sleep_price" property="sleepPrice"/>	
 	</resultMap>
 	
 	<!-- 通过用户ID和openId查询用户信息 -->
@@ -35,7 +35,8 @@
 			IFNULL(t.alipay_number,"" ) AS alipay_number,
 			IFNULL(t.`password`,"")AS password,
 			t.head_img as headImg,
-			IFNULL(t.iphone,"") AS iphone
+			t.is_sign,
+			t.sleep_price
 			
 		FROM
 			t_exp_decorate_user t
@@ -72,7 +73,6 @@
 		user_phone=#{userPhone},
 		user_name=#{userName},
 		alipay_number=#{alipayNumber},
-		iphone=#{userPhone},
 		password=#{password}
 		where user_id =#{userId}
 		]]>
