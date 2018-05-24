@@ -78,7 +78,14 @@ public class ExpDecorateUser  implements java.io.Serializable{
 	 * 头像 head_img
 	 */
 	private String headImg;
-	
+	/**
+	 * 是否签约 0否 1 是 默认 0
+	 */
+	private java.lang.Integer isSign;
+	/**
+	 * 待收益
+	 */
+	private BigDecimal sleepPrice;
 	//columns end
 
 
@@ -196,6 +203,22 @@ public class ExpDecorateUser  implements java.io.Serializable{
 
 	public void setHeadImg(String headImg) {
 		this.headImg = headImg;
+	}
+	
+	public java.lang.Integer getIsSign() {
+		return isSign;
+	}
+
+	public void setIsSign(java.lang.Integer isSign) {
+		this.isSign = isSign;
+	}
+
+	public BigDecimal getSleepPrice() {
+		return sleepPrice;
+	}
+
+	public void setSleepPrice(BigDecimal sleepPrice) {
+		this.sleepPrice = sleepPrice;
 	}
 
 	public String toString() {
