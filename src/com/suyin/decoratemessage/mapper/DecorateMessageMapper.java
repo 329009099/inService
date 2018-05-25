@@ -1,9 +1,8 @@
 package com.suyin.decoratemessage.mapper;
 
 
-import java.util.List;
-
 import java.util.*;
+
 import com.suyin.decoratemessage.model.*;
 import com.suyin.decoratemessage.service.*;
 
@@ -39,6 +38,6 @@ public interface DecorateMessageMapper {
     /**
      * 查询列表分页  
      */
-    public List<DecorateMessage> findDecorateMessageByPage(DecorateMessage entity);
+    public List<DecorateMessage> findDecorateMessageByPage(Map<String,Object> condition);
 
 }

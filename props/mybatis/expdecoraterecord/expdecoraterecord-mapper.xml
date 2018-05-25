@@ -7,12 +7,14 @@
 	
 		<result column="record_id" property="recordId"/>
 		<result column="publish_openid" property="publishOpenid"/>
-		<result column="publish_userid" property="publishUserid"/>
 		<result column="accept_openid" property="acceptOpenid"/>
-		<result column="accpt_userid" property="accptUserid"/>
 		<result column="state" property="state"/>
 		<result column="create_time" property="createTime"/>
 		<result column="commission_price" property="commissionPrice"/>
+		<result column="message" property="message"/>
+		<result column="price_state" property="priceState"/>
+		<result column="type" property="type"/>
+		
 	</resultMap>
 	
 		<!--信息更新 -->
@@ -39,14 +41,20 @@
 				accept_openid,		
 				state,		
 				create_time,
-				commission_price
+				commission_price,
+				message,
+				price_state,
+				type
 		)
 		values(
 				#{publishOpenid},
 				#{acceptOpenid},
 				#{state},
 				now(),
-				#{commissionPrice}
+				#{commissionPrice},
+				#{message},
+				#{priceState},
+				#{type}
 		)
 		]]>
 	</insert>

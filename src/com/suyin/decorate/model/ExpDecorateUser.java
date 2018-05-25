@@ -78,14 +78,32 @@ public class ExpDecorateUser  implements java.io.Serializable{
 	 * 头像 head_img
 	 */
 	private String headImg;
-	/**
-	 * 是否签约 0否 1 是 默认 0
-	 */
-	private java.lang.Integer isSign;
+	
 	/**
 	 * 待收益
 	 */
 	private BigDecimal sleepPrice;
+	
+	/**
+	 * 是否签约 0否 1 是 默认 0
+	 */
+	private java.lang.Integer isSign;
+	   /**
+     * 推荐人openid       db_column: use_openid 
+     */ 	
+	private java.lang.String useOpenid;
+    /**
+     * 已推荐用户；已邀请用户  默认0       db_column: use_num 
+     */ 	
+	private java.lang.Integer useNum;
+	/**
+     * 是否体验用户:0 否：1是       db_column: is_exp_user 
+     */ 	
+	private java.lang.Integer isExpUser;
+    /**
+     * 是否外销编制:0否1是       db_column: is_exp_org 
+     */ 	
+	private java.lang.Integer isExpOrg;
 	//columns end
 
 
@@ -219,6 +237,38 @@ public class ExpDecorateUser  implements java.io.Serializable{
 
 	public void setSleepPrice(BigDecimal sleepPrice) {
 		this.sleepPrice = sleepPrice;
+	}
+
+	public java.lang.String getUseOpenid() {
+		return useOpenid;
+	}
+
+	public void setUseOpenid(java.lang.String useOpenid) {
+		this.useOpenid = useOpenid;
+	}
+
+	public java.lang.Integer getUseNum() {
+		return useNum;
+	}
+
+	public void setUseNum(java.lang.Integer useNum) {
+		this.useNum = useNum;
+	}
+
+	public java.lang.Integer getIsExpUser() {
+		return isExpUser;
+	}
+
+	public void setIsExpUser(java.lang.Integer isExpUser) {
+		this.isExpUser = isExpUser;
+	}
+
+	public java.lang.Integer getIsExpOrg() {
+		return isExpOrg;
+	}
+
+	public void setIsExpOrg(java.lang.Integer isExpOrg) {
+		this.isExpOrg = isExpOrg;
 	}
 
 	public String toString() {

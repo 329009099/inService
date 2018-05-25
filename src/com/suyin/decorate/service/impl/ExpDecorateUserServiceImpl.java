@@ -241,7 +241,7 @@ public class ExpDecorateUserServiceImpl implements ExpDecorateUserService{
 			if(entity==null){	
 				return result;
 			}else{
-				entity.setUserState(0);
+
 				result = expDecorateUserMapper.initSaveDecorateUser(entity);
 			}
 		} catch (Exception e) {

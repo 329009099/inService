@@ -44,14 +44,15 @@ public class DecorateMessage  implements java.io.Serializable{
      * 发送消息的模块名称，如果以后要由消息点击后跳到模块，可以和send_entity联合找到       db_column: send_module_name 
      */ 	
 	private java.lang.String sendModuleName;
-    /**
+	  /**
+     * 0券，1签单，2购买，3消券，4作废，5分享
      * sendEntity       db_column: send_entity 
-     */ 	
+     */ 		
 	private java.lang.Integer sendEntity;
     /**
      * createTime       db_column: create_time 
      */ 	
-	private java.util.Date createTime;
+	private java.lang.String createTime;
     /**
      * 是否已读(默认是N未读状态)（现在用不到，也许以后会用到）       db_column: is_read 
      */ 	
@@ -112,11 +113,11 @@ public class DecorateMessage  implements java.io.Serializable{
 		this.sendEntity = value;
 	}
 	
-	public java.util.Date getCreateTime() {
+	public java.lang.String getCreateTime() {
 		return this.createTime;
 	}
 	
-	public void setCreateTime(java.util.Date value) {
+	public void setCreateTime(java.lang.String value) {
 		this.createTime = value;
 	}
 	

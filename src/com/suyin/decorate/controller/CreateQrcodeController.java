@@ -25,6 +25,8 @@ import com.suyin.decorate.model.Decorate;
 import com.suyin.decorate.model.ExpDecorateUser;
 import com.suyin.decorate.service.DecorateService;
 import com.suyin.decorate.service.ExpDecorateUserService;
+import com.suyin.decoratemessage.model.DecorateMessage;
+import com.suyin.decoratemessage.service.DecorateMessageService;
 import com.suyin.decoraterecord.model.ExpDecorateRecord;
 import com.suyin.decoraterecord.service.ExpDecorateRecordService;
 import com.suyin.system.util.SystemPropertiesHolder;
@@ -46,7 +48,8 @@ public class CreateQrcodeController {
 	private DecorateService decorateService;//活动管理信息
 	@Autowired
 	private ExpDecorateUserService expDecorateUserService;//用户信息
-
+	@Autowired
+	private DecorateMessageService decorateMessageService;//消息记录
 	/**
 	 * 1:根据openid查询用户的图片信息
 	 * 2:根据活动id查询活动的信息
@@ -134,21 +137,33 @@ public class CreateQrcodeController {
 		BigDecimal banlanprice=new BigDecimal(commissionbanlanPrice);
 		//总额
 		double commissionCountPrice=Utils.addUserPrice(countzv1,v2);//前往更新金额
-		BigDecimal countprice=new BigDecimal(commissionCountPrice);					
-
+		BigDecimal countprice=new BigDecimal(commissionCountPrice);	
+		//查询受邀人的信息
+		ExpDecorateUser invakeUser=expDecorateUserService.findUserInfoByUserIdOrOpenId("", accptopenid);
 		//调用更新user账户方法，根据openid 更新余额
 		ExpDecorateUser usereEntity=new ExpDecorateUser();
 		usereEntity.setOpenid(publishopenid);
 		usereEntity.setBalancePrice(banlanprice);
-		usereEntity.setCountPrice(countprice);
+		usereEntity.setCountPrice(countprice);				
 		expDecorateUserService.updateBalancePriceByOpendId(usereEntity);
 
+		//1添加消息给发起者，在发起者的我的消息查看
+		DecorateMessage message=new DecorateMessage();
+		message.setContent("您邀请了用户"+invakeUser.getNickName()+"获得佣金"+commission+"(元)");
+		message.setOpenid(publishopenid);
+		message.setSendModuleName("分享");
+		message.setSendEntity(5);
+		decorateMessageService.addDecorateMessage(message);
+		
 		//向t_exp_decorate_record表中插入记录，记录详细，用于用户的钱包中的金额详细展示
 		ExpDecorateRecord entity=new ExpDecorateRecord();
 		entity.setPublishOpenid(publishopenid);
 		entity.setAcceptOpenid(accptopenid);
-		entity.setState(1);
+		entity.setState(0);//0发起者，1受邀者
 		entity.setCommissionPrice(commission);//本次生成的佣金金额
+		entity.setMessage("您邀请了用户"+invakeUser.getNickName()+"获得佣金"+commission+"(元)");         
+		entity.setType(0);//收益类型:0分享，1:购买福券返佣金，2签单奖励
+		entity.setPriceState(0);//券状态 0:已收益 1:待收益
 		expDecorateRecordService.addExpDecorateRecord(entity);
 
 	}

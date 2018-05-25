@@ -17,7 +17,7 @@ public class ExpDecorateRecord  implements java.io.Serializable{
 	private Page page;//分页插件
 
 	//columns start
-		
+
     /**
      * recordId       db_column: record_id 
      */ 	
@@ -45,13 +45,26 @@ public class ExpDecorateRecord  implements java.io.Serializable{
     /**
      * createTime       db_column: create_time 
      */ 	
-	private java.util.Date createTime;
+	private java.lang.String createTime;
 	
 	/**
 	 * 本次佣金金额
 	 */
-	private String commissionPrice ;
+	private String commissionPrice;
 	
+
+	  /**
+   * 收益类型:0分享，1:购买福券返佣金，2签单奖励       db_column: type 
+   */ 	
+	private java.lang.Integer type;
+	   /**
+   * 券状态 0:已收益 1:待收益       db_column: price_state 
+   */ 	
+	private java.lang.Integer priceState;
+	/**
+	 * 消息体
+	 */
+	private java.lang.String message;
 	//columns end
 
 
@@ -115,11 +128,11 @@ public class ExpDecorateRecord  implements java.io.Serializable{
 		this.state = value;
 	}
 	
-	public java.util.Date getCreateTime() {
+	public java.lang.String getCreateTime() {
 		return this.createTime;
 	}
 	
-	public void setCreateTime(java.util.Date value) {
+	public void setCreateTime(java.lang.String value) {
 		this.createTime = value;
 	}
 	
@@ -130,6 +143,22 @@ public class ExpDecorateRecord  implements java.io.Serializable{
 	public void setCommissionPrice(String commissionPrice) {
 		this.commissionPrice = commissionPrice;
 	}
+	
+	public java.lang.Integer getType() {
+		return type;
+	}
+
+	public void setType(java.lang.Integer type) {
+		this.type = type;
+	}
+
+	public java.lang.Integer getPriceState() {
+		return priceState;
+	}
+
+	public void setPriceState(java.lang.Integer priceState) {
+		this.priceState = priceState;
+	}
 
 	public Page getPage() {
         return page;
@@ -137,6 +166,15 @@ public class ExpDecorateRecord  implements java.io.Serializable{
     public void setPage(Page page) {
         this.page = page;
     }
+    
+	public java.lang.String getMessage() {
+		return message;
+	}
+
+	public void setMessage(java.lang.String message) {
+		this.message = message;
+	}
+
 	public String toString() {
 		return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
 			.append("RecordId",getRecordId())

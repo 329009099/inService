@@ -1,11 +1,11 @@
-package com.suyin.decoratemessage.service.impl;
+package com.suyin.decoratebuyorder.service.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.suyin.decoratemessage.mapper.DecorateMessageMapper;
+import com.suyin.decoratebuyorder.mapper.DecorateBuyOrderMapper;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,19 +16,19 @@ import com.suyin.system.util.Md5Util;
 
 import java.util.*;
 
-import com.suyin.decoratemessage.model.*;
-import com.suyin.decoratemessage.service.*;
+import com.suyin.decoratebuyorder.model.*;
+import com.suyin.decoratebuyorder.service.*;
 
 
 
 @Transactional
-@Service("DecorateMessageService")
-public class DecorateMessageServiceImpl implements DecorateMessageService{
+@Service("DecorateBuyOrderService")
+public class DecorateBuyOrderServiceImpl implements DecorateBuyOrderService{
 
-    private final static Logger log=Logger.getLogger(DecorateMessageServiceImpl.class);
+    private final static Logger log=Logger.getLogger(DecorateBuyOrderServiceImpl.class);
     
     @Autowired
-    private DecorateMessageMapper DecorateMessageMapper; 
+    private DecorateBuyOrderMapper DecorateBuyOrderMapper; 
 
     /**
      * 新增信息
@@ -36,14 +36,14 @@ public class DecorateMessageServiceImpl implements DecorateMessageService{
      * @return
      */
     @Override
-    public Integer addDecorateMessage(DecorateMessage entity){
+    public Integer addDecorateBuyOrder(DecorateBuyOrder entity){
         Integer result=0;
         try {
 
             if(entity==null){
                 return result;
             }else{
-                result = DecorateMessageMapper.addDecorateMessage(entity);
+                result = DecorateBuyOrderMapper.addDecorateBuyOrder(entity);
             }
 
         } catch (Exception e) {
@@ -60,7 +60,7 @@ public class DecorateMessageServiceImpl implements DecorateMessageService{
      * @return
      */
     @Override
-    public Integer updateDecorateMessage(DecorateMessage entity){
+    public Integer updateDecorateBuyOrder(DecorateBuyOrder entity){
 
         Integer result=0;
         try {
@@ -69,11 +69,11 @@ public class DecorateMessageServiceImpl implements DecorateMessageService{
                 return result;
             }else{
 
-                result = DecorateMessageMapper.updateDecorateMessage(entity);
+                result = DecorateBuyOrderMapper.updateDecorateBuyOrder(entity);
             }
         } catch (Exception e) {
             
-            log.error("DecorateMessage信息修改异常"+e.getMessage());
+            log.error("DecorateBuyOrder信息修改异常"+e.getMessage());
             new RuntimeException();
             e.printStackTrace();
         }
@@ -87,10 +87,10 @@ public class DecorateMessageServiceImpl implements DecorateMessageService{
      * @return
      */
     @Override
-    public Integer deleteDecorateMessage(String id){
+    public Integer deleteDecorateBuyOrder(String id){
         
         
-        return DecorateMessageMapper.deleteDecorateMessage(id);
+        return DecorateBuyOrderMapper.deleteDecorateBuyOrder(id);
     }
 
     /**
@@ -99,10 +99,10 @@ public class DecorateMessageServiceImpl implements DecorateMessageService{
      * @return
      */
     @Override
-    public List<DecorateMessage> findDecorateMessage(DecorateMessage entity){
+    public List<DecorateBuyOrder> findDecorateBuyOrder(DecorateBuyOrder entity){
         
         
-        return DecorateMessageMapper.findDecorateMessage(entity);
+        return DecorateBuyOrderMapper.findDecorateBuyOrder(entity);
     }
 
     /**
@@ -111,10 +111,10 @@ public class DecorateMessageServiceImpl implements DecorateMessageService{
      * @return
      */
     @Override
-    public List<DecorateMessage> findDecorateMessageByPage(Map<String,Object> condition){
+    public List<DecorateBuyOrder> findDecorateBuyOrderByPage(Map<String,Object> entity){
         
         
-        return DecorateMessageMapper.findDecorateMessageByPage(condition);
+        return DecorateBuyOrderMapper.findDecorateBuyOrderByPage(entity);
     }
 
     /**
@@ -123,9 +123,9 @@ public class DecorateMessageServiceImpl implements DecorateMessageService{
      * @return
      */
     @Override
-    public DecorateMessage findDecorateMessageById(DecorateMessage entity){
+    public DecorateBuyOrder findDecorateBuyOrderById(DecorateBuyOrder entity){
         
-        List<DecorateMessage> list=DecorateMessageMapper.findDecorateMessage(entity);
+        List<DecorateBuyOrder> list=DecorateBuyOrderMapper.findDecorateBuyOrder(entity);
         return list!=null&&!list.isEmpty()?list.get(0):null;
     }
 }

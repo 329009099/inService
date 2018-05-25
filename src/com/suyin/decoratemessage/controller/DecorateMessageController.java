@@ -1,14 +1,16 @@
 
 package com.suyin.decoratemessage.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -30,8 +32,10 @@ import com.suyin.system.model.Page;
 import com.suyin.system.util.Tools;
 
 import java.util.*;
+
 import com.suyin.decoratemessage.model.*;
 import com.suyin.decoratemessage.service.*;
+import com.suyin.decoratevoucher.model.ExpDecorateUserVoucher;
 
 
 /**
@@ -47,17 +51,6 @@ public class DecorateMessageController{
     @Autowired
     private DecorateMessageService decorateMessageService;
 
-    /**
-     * 首页
-     * @return 
-     * @see
-     */
-    @RequestMapping(value="/index")
-    public ModelAndView index() {
-
-        return new ModelAndView("decoratemessage/index");
-    }
-
 
     /**
      * 读取列表
@@ -65,33 +58,27 @@ public class DecorateMessageController{
      * @return 
      * @see
      */
-    @RequestMapping(value = "/list")
-    public @ResponseBody Map<String, Object> findForDecorateMessageAll(HttpServletRequest request) {
-        ModelMap map=new ModelMap();
-
-        String pag = request.getParameter("page");
-        String showCount = request.getParameter("rows");
-        Page page = new Page();
-        try
-        {      
-            if (null != pag && null != showCount) {
-                page.setCurrentPage(Integer.parseInt(pag));
-                page.setShowCount(Integer.parseInt(showCount));
-            }
-
-            DecorateMessage  entityInfo=new DecorateMessage ();
-            entityInfo.setPage(page);
-            List<DecorateMessage > list=decorateMessageService.findDecorateMessageByPage(entityInfo);
-            map.put("rows",list); 
-            map.put("total",entityInfo.getPage().getTotalResult()); 
-
+    @RequestMapping(value = "/findUseMessageList")
+    public @ResponseBody ModelMap findForDecorateMessageAll(HttpServletRequest request) {
+    	ModelMap result=new ModelMap();
+        Map<String,Object> condition=new HashMap<String, Object>();
+        String openId=request.getParameter("openid");
+        Page page=new Page();
+        if(StringUtils.isNotBlank(request.getParameter("page.showCount"))) 
+            page.setShowCount(Integer.parseInt(request.getParameter("page.showCount")));
+        if(StringUtils.isNotBlank(request.getParameter("page.currentPage")))
+            page.setCurrentPage(Integer.parseInt(request.getParameter("page.currentPage")));
+        condition.put("page", page); 
+        condition.put("openid", openId);   
+        result.put("args", condition);
+ 		List<DecorateMessage> list=decorateMessageService.findDecorateMessageByPage(condition);	
+ 		if(list.size()<1){
+            result.put("message", "error");
+        }else {
+            result.put("data", list);
+            result.put("message", "success");       
         }
-        catch (Exception e)
-        {
-            log.error("Controller Error DecorateMessageController-> findDecorateMessageByWhere  " + e.getMessage());
-        }
-
-        return map;
+        return result;
     }
 
 

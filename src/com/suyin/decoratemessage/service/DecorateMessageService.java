@@ -1,8 +1,7 @@
 package com.suyin.decoratemessage.service;
 
-import java.util.List;
-
 import java.util.*;
+
 import com.suyin.decoratemessage.model.*;
 import com.suyin.decoratemessage.service.*;
 
@@ -44,7 +43,7 @@ public interface DecorateMessageService{
      * @param entity
      * @return
      */
-    public List<DecorateMessage> findDecorateMessageByPage(DecorateMessage entity);
+    public List<DecorateMessage> findDecorateMessageByPage(Map<String,Object> condition);
 
     /**
      * 根据id查询对应的信息

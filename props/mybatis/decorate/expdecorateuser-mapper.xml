@@ -17,7 +17,13 @@
 		<result column="alipay_number" property="alipayNumber"/>
 		<result column="password" property="password"/>
 		<result column="is_sign" property="isSign"/>
-		<result column="sleep_price" property="sleepPrice"/>	
+		<result column="sleep_price" property="sleepPrice"/>
+		<result column="use_openid" property="useOpenid"/>
+		<result column="use_num" property="useNum"/>
+		<result column="is_exp_org" property="isExpOrg"/>
+		<result column="is_exp_user" property="isExpUser"/>
+		
+			
 	</resultMap>
 	
 	<!-- 通过用户ID和openId查询用户信息 -->
@@ -36,7 +42,11 @@
 			IFNULL(t.`password`,"")AS password,
 			t.head_img as headImg,
 			t.is_sign,
-			t.sleep_price
+			t.sleep_price,
+			t.use_num,
+			t.use_openid,
+			t.is_exp_org,
+			t.is_exp_user
 			
 		FROM
 			t_exp_decorate_user t
@@ -57,6 +67,7 @@
 		update
 		 t_exp_decorate_user
 		set 
+		use_num=(use_num+1),
 		balance_price=#{balancePrice},
 		count_price=#{countPrice}
 		where openid =#{openid}
@@ -83,12 +94,14 @@
 		insert  t_exp_decorate_user (
 				openid,		
 				nick_name,
-				head_img		
+				head_img,
+				use_openid		
 		)
 		values(
 				#{openid},
 				#{nickName},
-				#{headImg}
+				#{headImg},
+				#{useOpenid}
 		)
 		]]>
 	</insert>

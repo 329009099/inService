@@ -64,7 +64,7 @@ public class ExpDecorateUserController{
 		return result;
 	}
     /**
-     * 新增或修改信息
+     * 首次进入，保存用户信息
      * @param entity
      * @return
      */
