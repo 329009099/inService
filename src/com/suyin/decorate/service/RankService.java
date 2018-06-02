@@ -18,4 +18,9 @@ public interface RankService {
 	 * @return
 	 */
 	List<Map<String,Object>> findAllRankInfo( Map<String,Object> condition);
+	  /**
+     * 根据类型查询排名信息TYPE 0人气 1体验2签单
+     * @return
+     */
+    public List<Map<String,Object>>findByTypeAllRankList(Map<String,Object>params);
 }

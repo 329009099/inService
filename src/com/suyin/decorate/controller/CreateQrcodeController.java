@@ -1,13 +1,24 @@
 package com.suyin.decorate.controller;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import javax.imageio.ImageIO;
+import javax.imageio.stream.ImageOutputStream;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +27,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.zxing.WriterException;
 import com.suyin.common.ImageHandleHelper;
 import com.suyin.common.QrCodeWriterUtils;
 import com.suyin.common.Utils;
@@ -83,10 +95,12 @@ public class CreateQrcodeController {
 				params.put("accptopenid", accptopenid);
 				ExpDecorateRecord exRecord=expDecorateRecordService.findExpRecordByPublisAndReviewOpenid(params);
 				if(null!=exRecord){
+					//参与过了也可以是人气数，不增加金额了而已
+					//expDecorateUserService.updateUserUseNum(publishopenid);
 					log.debug("当前用户已经，被邀请过，无法再次邀请..");
 				}else{
 					try {
-						
+
 						DecimalFormat df= new DecimalFormat("######0.00");	
 						//随机金额区间，记录本次佣金金额
 						double  randomPrice=Utils.nextDouble(decorate.getBeginMoney().doubleValue(), decorate.getEndMoney().doubleValue());
@@ -102,12 +116,12 @@ public class CreateQrcodeController {
 								//如果达到封顶金额，将直接保存差值						
 								String commission= df.format(allowPrice);
 								this.crateMoney(decorateUser, publishopenid, accptopenid, commission);
-	
+
 							}
 						}catch(Exception ex){						
 							log.error("增加佣金失败，写入订单失败....",ex);
 						}
-	
+
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						log.error("金额转换失败....",e);
@@ -154,7 +168,7 @@ public class CreateQrcodeController {
 		message.setSendModuleName("分享");
 		message.setSendEntity(5);
 		decorateMessageService.addDecorateMessage(message);
-		
+
 		//向t_exp_decorate_record表中插入记录，记录详细，用于用户的钱包中的金额详细展示
 		ExpDecorateRecord entity=new ExpDecorateRecord();
 		entity.setPublishOpenid(publishopenid);
@@ -166,6 +180,33 @@ public class CreateQrcodeController {
 		entity.setPriceState(0);//券状态 0:已收益 1:待收益
 		expDecorateRecordService.addExpDecorateRecord(entity);
 
+	}
+
+	@RequestMapping(value="ddd")
+	public @ResponseBody void ddd(HttpServletRequest request,HttpServletResponse response) throws Exception{
+		try {
+			String expId=request.getParameter("id");//活动id
+			String tourl=request.getParameter("url");//跳转的url(二维码内的连接)
+			String openid=request.getParameter("openid");
+			//用户二维码生成路径
+			String templatePath=request.getSession().getServletContext().getRealPath("/");
+			BufferedImage image=QrCodeWriterUtils.createQrcodeImage("lz646775788", "http://www.baidu.com");
+			File templatefile=new File(templatePath+"/WEB-INF/resources/template/template1.jpg");
+			
+		    //BufferedImage 转 InputStream
+		    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+		    ImageOutputStream imageOutput = ImageIO.createImageOutputStream(byteArrayOutputStream);
+		    ImageIO.write(image, "png", imageOutput);
+		    InputStream inputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+		    //合成图片
+			QrCodeWriterUtils.generateCode(templatefile.toString(), inputStream, "lz646775788", "lz",response);
+		} catch (WriterException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -224,20 +265,5 @@ public class CreateQrcodeController {
 		}
 		return result;
 	}
-
-	public static void main(String[] args) {
-		double min=0.10;
-		double max=1.20;
-		try {
-			for (int i = 0; i < 1000; i++) {
-				double  randomPrice=Utils.nextDouble(min, max);
-				System.out.println(randomPrice);
-			}
-
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
+	
 }

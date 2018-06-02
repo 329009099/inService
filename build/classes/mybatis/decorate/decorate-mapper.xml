@@ -21,16 +21,48 @@
 		<result column="active_img" property="activeImg"/>
 		<result column="begin_money" property="beginMoney"/>
 		<result column="end_money" property="endMoney"/>
+		<result column="max_money" property="maxMoney"/>
+		<result column="tq_money" property="tqMoney"/>
 		<result column="status" property="status"/>
 		<result column="exp_uv" property="expUv"/>
 		<result column="exp_pv" property="expPv"/>
 		<result column="count_price" property="countPrice"/>
+		<result column="is_actdate" property="isActDate"/><!-- 虚拟字段 逻辑字段 -->
 	
 	</resultMap>
 	
-	<select id="findDecorateById" parameterType="java.lang.String" resultMap="DecorateMap">
+	<select id="findDecorateById" parameterType="String" resultMap="DecorateMap">
 	   <![CDATA[
-		select * from t_exp_decorate t where 1=1  and t.id=#{id}
+		   SELECT
+				t.seller_description,
+				t.description,
+				t.active_img,
+				t.id,
+				t.`name`,
+				t.`status`,
+				t.create_time,
+				t.share_title,
+				t.share_img,
+				t.begin_money,
+				t.end_money,
+				t.max_money,
+				t.tq_money,
+				t.count_price,
+				t.title,
+				t.status,
+				date_format(t.begin_time,'%Y-%m-%d %H:%i:%s') as begin_time,
+				date_format(t.end_time,'%Y-%m-%d %H:%i:%s') as end_time,
+				CASE 
+					WHEN now()>t.begin_time and now()<t.end_time THEN '1'
+					WHEN now()<t.begin_time THEN '0'
+					WHEN now() >t.end_time THEN '2' 
+				ELSE '-1' END  AS is_actdate
+			FROM
+				t_exp_decorate t
+			WHERE
+			1=1
+
+			AND t.id =#{id}			
 		]]>
 	</select>
 	

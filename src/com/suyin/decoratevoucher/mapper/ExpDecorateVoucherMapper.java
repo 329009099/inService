@@ -10,6 +10,23 @@ import com.suyin.decoratevoucher.service.*;
 
 
 public interface ExpDecorateVoucherMapper {
+	/**
+	 * key orderId
+	 * key vourcheCode
+	 * 根据券号修改支付状态
+	 * @param voucheCode
+	 */
+	void updateVoucherPayState(Map<String,Object>params);
+	/**
+	 * 更新数量
+	 * @param id
+	 */
+	public void updateRemNum(Integer id);
+	/**
+	 * 保存购买的券
+	 * @param voucherUser
+	 */
+	void  saveUserVoucher(ExpDecorateUserVoucher voucherUser);
 	
 	/**
 	 * 根据OPENID查询我的券

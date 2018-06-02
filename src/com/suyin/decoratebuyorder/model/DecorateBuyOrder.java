@@ -42,7 +42,7 @@ public class DecorateBuyOrder  implements java.io.Serializable{
     /**
      * 订单金额       db_column: order_price 
      */ 	
-	private Long orderPrice;
+	private java.lang.String  orderPrice;
     /**
      * 订单类型:0:福利券，1 体验券，2优惠券       db_column: order_type 
      */ 	
@@ -107,11 +107,11 @@ public class DecorateBuyOrder  implements java.io.Serializable{
 		this.orderCode = value;
 	}
 	
-	public Long getOrderPrice() {
+	public java.lang.String  getOrderPrice() {
 		return this.orderPrice;
 	}
 	
-	public void setOrderPrice(Long value) {
+	public void setOrderPrice(java.lang.String  value) {
 		this.orderPrice = value;
 	}
 	

@@ -25,7 +25,26 @@
 		
 			
 	</resultMap>
-	
+		<!--通过Openid修改用户邀请数量，人气数，在分享金额达到个人收益上限的时候，人气数依然持续增长-->
+	<update id="updateUserUseNum"  parameterType="String">
+		<![CDATA[
+		update
+		 t_exp_decorate_user
+		set 
+		use_num=(use_num+1),
+		where openid =#{openid}
+		]]>
+	</update>
+	<!-- 根据openId修改是否为体验用户 -->
+	<update id="updateExpDecorateUserByOpenId" parameterType="String">
+		<![CDATA[
+		update
+		 t_exp_decorate_user
+		set 
+		is_exp_user=1
+		where openid =#{openid}
+		]]>
+	</update>
 	<!-- 通过用户ID和openId查询用户信息 -->
 	<select id="findUserInfoByUserIdOrOpenId" parameterType="hashmap" resultMap="ExpDecorateUserMap">
 	   <![CDATA[
@@ -46,8 +65,7 @@
 			t.use_num,
 			t.use_openid,
 			t.is_exp_org,
-			t.is_exp_user
-			
+			t.is_exp_user		
 		FROM
 			t_exp_decorate_user t
 		WHERE 

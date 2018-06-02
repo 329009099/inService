@@ -10,6 +10,25 @@ import com.suyin.decorate.model.ExpDecorateUser;
 
 
 public interface ExpDecorateUserService{
+	/**
+	 * 根据openID修改邀请数
+	 * @param openId
+	 * @return
+	 */
+    public Integer updateUserUseNum(String openId);
+    /**
+     * 根据openId
+     * 修改信息
+     * 	//更新当前购买用户为体验用户 0 否：1是    isExpUser
+     * @param entity
+     * @return
+     */
+    public Integer updateExpDecorateUserByOpenId(String openId);
+	/**
+	 * 查询分页数据，移动端展示
+	 * @param params
+	 * @return
+	 */
 	public List<ExpDecorateOrder>findUserOrderRecordByPage(Map<String,Object> params);
 	/**
 	 * 通过用户ID和openId查询用户信息

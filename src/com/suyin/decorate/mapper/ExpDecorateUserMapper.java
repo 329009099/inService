@@ -12,6 +12,22 @@ import com.suyin.decorate.model.ExpDecorateUser;
 public interface ExpDecorateUserMapper {
 	
 	/**
+	 * 
+	 * 根据openID修改邀请数人气数
+	 * 每个点击分享页面的都可以是人气数
+	 * @param openId
+	 * @return
+	 */
+    public Integer updateUserUseNum(String openId);
+
+	/**
+	 * 根据openId修改状态
+	 * @param openId
+	 * @return
+	 */
+    public Integer updateExpDecorateUserByOpenId(String openId);
+	
+	/**
 	 * 通过用户ID和openId查询用户信息
 	 * @param userId
 	 * @param openId

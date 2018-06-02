@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.suyin.decorate.mapper.RankMapper">
-	
+
 	<!-- 查询排名 -->
 	<select id="getMyRankInfo" parameterType="String" resultType="Integer">
 	   <![CDATA[
@@ -21,9 +21,10 @@
 				)
 		]]>
 	</select>
-	
-	<!-- map 方式 -->
-	<select id="findAllRanListByPage"  resultType="java.util.HashMap" parameterType="java.util.HashMap">
+
+	<!-- 查询总收益列表 -->
+	<select id="findAllRanListByPage" resultType="java.util.HashMap"
+		parameterType="hashmap">
 	<![CDATA[
 		SELECT	
 			@rownum:=@rownum+1 as rankNum,
@@ -38,5 +39,28 @@
 		ORDER BY t.count_price DESC
 		]]>
 	</select>
-	
+	<!-- 根据类型查询排名列表，type：0 人气 1体验 2签单 -->
+	<select id="findByTypeAllRankList" resultType="hashmap" parameterType="hashmap">
+	<![CDATA[
+		SELECT @rownum:=@rownum+1 as rankNum ,R.* FROM(
+			SELECT
+				count(t.accept_openid) AS countpop,
+				t.type,
+				t.create_time,
+				u.head_img,
+				IFNULL(u.user_phone,"****") as user_phone,
+				u.nick_name
+			FROM
+				t_exp_decorate_record t
+			LEFT JOIN 
+				t_exp_decorate_user u
+				ON
+				t.publish_openid=u.openid
+				WHERE t.type=#{type}
+				GROUP BY 
+			t.accept_openid) R,(SELECT @rownum:=0) ss
+		ORDER BY R.countpop DESC
+	]]>
+	</select>
+
 </mapper>	

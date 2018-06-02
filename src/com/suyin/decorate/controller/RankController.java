@@ -1,5 +1,6 @@
 package com.suyin.decorate.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +43,7 @@ public class RankController {
 		ModelMap result=new ModelMap();
 		String expId=request.getParameter("id");//活动id
 		String openid=request.getParameter("openid");
+		String type=request.getParameter("type");
 		ExpDecorateUser expDecorateUser = this.decorateRecordService.findUserInfoByUserIdOrOpenId("",openid);
 		Integer rankNumber = this.rankService.getMyRankInfo(openid);
 		result.put("rankNumber", rankNumber);
@@ -60,6 +62,8 @@ public class RankController {
 		ModelMap result = new ModelMap();
 		Map<String, Object> condition = new HashMap<String, Object>();
 		String expId=request.getParameter("id");//活动id
+		String type=request.getParameter("type");
+
 		Page page = new Page();
 		if (StringUtils.isNotBlank(request.getParameter("page.showCount"))) {
 			page.setShowCount(Integer.parseInt(request
@@ -70,8 +74,15 @@ public class RankController {
 					.getParameter("page.currentPage")));
 		}
 		condition.put("page", page);
+		condition.put("type",type);
 		result.put("args", condition);
-		List<Map<String, Object>> list = this.rankService.findAllRankInfo(condition);
+		List<Map<String, Object>>list=new ArrayList<Map<String,Object>>();
+		if("-1".equals(type)){
+			//总收益
+			list = this.rankService.findAllRankInfo(condition);
+		}else{//人气榜，体验榜，签单榜
+			list=this.rankService.findByTypeAllRankList(condition);
+		}
 		if (list.size() < 1) {
 			result.put("message", "error");
 		} else {

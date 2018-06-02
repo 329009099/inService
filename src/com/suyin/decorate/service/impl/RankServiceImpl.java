@@ -25,4 +25,11 @@ public class RankServiceImpl implements RankService {
 		return this.rankMapper.findAllRanListByPage(condition);
 	}
 
+	@Override
+	public List<Map<String, Object>> findByTypeAllRankList(
+			Map<String, Object> params) {
+		// TODO Auto-generated method stub
+		return  this.rankMapper.findByTypeAllRankList(params);
+	}
+
 }

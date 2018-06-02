@@ -274,4 +274,19 @@ public class ExpDecorateUserServiceImpl implements ExpDecorateUserService{
 		// TODO Auto-generated method stub
 		return expDecorateOrderMapper.findUserOrderRecordByPage(params);
 	}
+
+
+	@Override
+	public Integer updateExpDecorateUserByOpenId(String openId) {
+		// TODO Auto-generated method stub
+		
+		return expDecorateUserMapper.updateExpDecorateUserByOpenId(openId);
+	}
+
+
+	@Override
+	public Integer updateUserUseNum(String openId) {
+		// TODO Auto-generated method stub
+		return expDecorateUserMapper.updateUserUseNum(openId);
+	}
 }

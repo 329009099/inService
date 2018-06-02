@@ -1,6 +1,6 @@
-#Mon Dec 07 11:11:29 CST 2015
 eclipse.preferences.version=1
 encoding//props/cache.properties=UTF-8
 encoding//props/config/system.properties=UTF-8
+encoding//props/log4j.properties=UTF-8
 encoding/<project>=UTF-8
 encoding/src=UTF-8

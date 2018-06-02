@@ -128,4 +128,22 @@ public class DecorateBuyOrderServiceImpl implements DecorateBuyOrderService{
         List<DecorateBuyOrder> list=DecorateBuyOrderMapper.findDecorateBuyOrder(entity);
         return list!=null&&!list.isEmpty()?list.get(0):null;
     }
+
+	@Override
+	public void orderUpdateState(String tradeNo) {
+		// TODO Auto-generated method stub
+		DecorateBuyOrderMapper.orderUpdateState(tradeNo);
+	}
+
+	@Override
+	public DecorateBuyOrder findByOrderNumInfo(String tradeNo) {
+		// TODO Auto-generated method stub
+		return DecorateBuyOrderMapper.findByOrderNumInfo(tradeNo);
+	}
+
+	@Override
+	public DecorateBuyOrder findOrderByIdInfo(String id) {
+		// TODO Auto-generated method stub
+		return DecorateBuyOrderMapper.findOrderByIdInfo(id);
+	}
 }

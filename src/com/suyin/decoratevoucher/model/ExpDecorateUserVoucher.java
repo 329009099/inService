@@ -33,6 +33,10 @@ public class ExpDecorateUserVoucher  implements java.io.Serializable{
      * 券主键ID       db_column: voucher_id 
      */ 	
 	private java.lang.Integer voucherId;
+	/**
+	 * 订单编号
+	 */
+	private java.lang.Integer orderId;
     /**
      * 券号       db_column: vourche_code 
      */ 	
@@ -102,9 +106,23 @@ public class ExpDecorateUserVoucher  implements java.io.Serializable{
 	 * 定期时长
 	 */
 	private java.lang.String  validityDay;
+	/**
+	 * 0 未支付，1已支付 默认0
+	 * 支付状态
+	 */
+	private java.lang.Integer payState;
 
+	
 	//columns end
 
+
+	public java.lang.Integer getOrderId() {
+		return orderId;
+	}
+
+	public void setOrderId(java.lang.Integer orderId) {
+		this.orderId = orderId;
+	}
 
 	public ExpDecorateUserVoucher(){
 	}
@@ -277,6 +295,14 @@ public class ExpDecorateUserVoucher  implements java.io.Serializable{
 
 	public void setValidityDay(java.lang.String validityDay) {
 		this.validityDay = validityDay;
+	}
+
+	public java.lang.Integer getPayState() {
+		return payState;
+	}
+
+	public void setPayState(java.lang.Integer payState) {
+		this.payState = payState;
 	}
 
 	public String toString() {

@@ -4,7 +4,9 @@ package com.suyin.decoratebuyorder.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +17,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.suyin.system.model.Page;
 import com.suyin.system.util.Tools;
+import com.suyin.decorate.service.ExpDecorateUserService;
 import com.suyin.decoratebuyorder.model.*;
 import com.suyin.decoratebuyorder.service.*;
+import com.suyin.decoratemessage.model.DecorateMessage;
+import com.suyin.decoratemessage.service.DecorateMessageService;
+import com.suyin.decoratevoucher.service.ExpDecorateVoucherService;
 
 
 /**
@@ -31,9 +37,22 @@ public class DecorateBuyOrderController{
     private final static Logger log=Logger.getLogger(DecorateBuyOrderController.class);
     @Autowired
     private DecorateBuyOrderService decorateBuyOrderService;
-
-
-
+    @Autowired
+    private DecorateMessageService decorateMessageService;
+    @Autowired
+    private ExpDecorateUserService decorateUserService;
+	@Autowired
+	private ExpDecorateVoucherService expDecorateVoucherService;
+    /**
+     * 根据ID查询订单
+     * @param request
+     * @return
+     */
+    @RequestMapping(value="/findOrderByIdInfo")
+    public @ResponseBody DecorateBuyOrder findOrderByIdInfo(HttpServletRequest request){
+    	String id=request.getParameter("id");
+    	return decorateBuyOrderService.findOrderByIdInfo(id);
+    }
     /**
      * 读取列表
      * @param request
@@ -65,7 +84,39 @@ public class DecorateBuyOrderController{
         return result;
     }
 
- 
+    /**
+     * 修改订单状态
+     * @param request
+     */
+    @RequestMapping(value = "/orderState")
+    public @ResponseBody void orderState(HttpServletRequest request) {
+    	String tradeNo=request.getParameter("tradeNo");
+    	String openid=request.getParameter("openid");
+    	DecorateMessage entity=new DecorateMessage();
+    	DecorateBuyOrder order=decorateBuyOrderService.findByOrderNumInfo(tradeNo);
+    	if(null!=order){
+	    	decorateBuyOrderService.orderUpdateState(order.getOrderCode());
+	    	//更新当前购买用户为体验用户 0 否：1是    isExpUser
+	    	decorateUserService.updateExpDecorateUserByOpenId(openid);
+	    	//组织修改券状态所需的参数
+	    	Map<String,Object>params=new HashMap<String, Object>();
+	    	params.put("orderId", order.getOrderId());
+	    	params.put("vourcheCode", order.getVoucherCode());
+	    	//修改券支付状态
+	    	expDecorateVoucherService.updateVoucherPayState(params);
+			//增加Message购买信息至用户中心我的消息
+	    	entity.setContent("恭喜你成功购买了福利券:"+order.getOrderName()+"");
+	    	entity.setOpenid(openid);
+	    	entity.setSendEntity(2);
+	    	entity.setSendModuleName("购买福券");
+    	}else{
+    	  	entity.setContent("恭喜你成功购买了福利券失败");
+	    	entity.setOpenid(openid);
+	    	entity.setSendEntity(2);
+	    	entity.setSendModuleName("购买福券");
+    	}
+    	decorateMessageService.addDecorateMessage(entity);
+    }
     /**
      * 信息保存
      * Description: <br>

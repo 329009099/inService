@@ -18,5 +18,10 @@ public interface RankMapper {
 	 * @return
 	 */
     public List<Map<String,Object>> findAllRanListByPage(Map<String, Object> exp);
+    /**
+     * 根据类型查询排名信息TYPE 0人气 1体验2签单
+     * @return
+     */
+    public List<Map<String,Object>>findByTypeAllRankList(Map<String,Object>params);
 
 }

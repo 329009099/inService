@@ -9,31 +9,88 @@
 		<result column="openid" property="openid"/>
 		<result column="user_phone" property="userPhone"/>
 		<result column="nick_name" property="nickName"/>
+		<result column="head_img" property="headImg"/>
 		<result column="user_name" property="userName"/>
 		<result column="user_state" property="userState"/>
 		<result column="count_price" property="countPrice"/>
 		<result column="balance_price" property="balancePrice"/>
 		<result column="alipay_number" property="alipayNumber"/>
-		<result column="iphone" property="iphone"/>
 		<result column="password" property="password"/>
-	
+		<result column="is_sign" property="isSign"/>
+		<result column="sleep_price" property="sleepPrice"/>
+		<result column="use_openid" property="useOpenid"/>
+		<result column="use_num" property="useNum"/>
+		<result column="is_exp_org" property="isExpOrg"/>
+		<result column="is_exp_user" property="isExpUser"/>
+		
+			
 	</resultMap>
-	
+		<!--通过Openid修改用户邀请数量，人气数，在分享金额达到个人收益上限的时候，人气数依然持续增长-->
+	<update id="updateUserUseNum"  parameterType="String">
+		<![CDATA[
+		update
+		 t_exp_decorate_user
+		set 
+		use_num=(use_num+1),
+		where openid =#{openid}
+		]]>
+	</update>
+	<!-- 根据openId修改是否为体验用户 -->
+	<update id="updateExpDecorateUserByOpenId" parameterType="String">
+		<![CDATA[
+		update
+		 t_exp_decorate_user
+		set 
+		is_exp_user=1
+		where openid =#{openid}
+		]]>
+	</update>
 	<!-- 通过用户ID和openId查询用户信息 -->
 	<select id="findUserInfoByUserIdOrOpenId" parameterType="hashmap" resultMap="ExpDecorateUserMap">
 	   <![CDATA[
-		select * 
-		from t_exp_decorate_user 
-		where 
+		SELECT
+			t.user_id,
+			t.openid,
+			IFNULL(t.user_phone,"") AS user_phone,
+			t.nick_name,
+			IFNULL(t.user_name,"") AS user_name,
+			t.user_state,
+			t.count_price,
+			t.balance_price,
+			IFNULL(t.alipay_number,"" ) AS alipay_number,
+			IFNULL(t.`password`,"")AS password,
+			t.head_img as headImg,
+			t.is_sign,
+			t.sleep_price,
+			t.use_num,
+			t.use_openid,
+			t.is_exp_org,
+			t.is_exp_user		
+		FROM
+			t_exp_decorate_user t
+		WHERE 
 		1=1
 		]]>
 		<if test="userId != null and userId != ''">
-			<![CDATA[ and user_id =#{userId} ]]>
+			<![CDATA[ and t.user_id =#{userId} ]]>
 		</if>
 		<if test="openId != null and openId != ''">
-			<![CDATA[ and openid =#{openId} ]]>
+			<![CDATA[ and t.openid =#{openId} ]]>
 		</if>
 	</select>
+	
+	<!--通过Openid修改余额 -->
+	<update id="updateBalancePriceByOpendId"  parameterType="com.suyin.decorate.model.ExpDecorateUser">
+		<![CDATA[
+		update
+		 t_exp_decorate_user
+		set 
+		use_num=(use_num+1),
+		balance_price=#{balancePrice},
+		count_price=#{countPrice}
+		where openid =#{openid}
+		]]>
+	</update>
 	
 		<!--信息更新 -->
 	<update id="updateExpDecorateUser"  parameterType="com.suyin.decorate.model.ExpDecorateUser">
@@ -45,12 +102,27 @@
 		user_phone=#{userPhone},
 		user_name=#{userName},
 		alipay_number=#{alipayNumber},
-		iphone=#{userPhone},
 		password=#{password}
 		where user_id =#{userId}
 		]]>
 	</update>
-	
+	<insert id="initSaveDecorateUser"  parameterType="com.suyin.decorate.model.ExpDecorateUser" useGeneratedKeys="true" keyProperty="id">
+	<![CDATA[
+
+		insert  t_exp_decorate_user (
+				openid,		
+				nick_name,
+				head_img,
+				use_openid		
+		)
+		values(
+				#{openid},
+				#{nickName},
+				#{headImg},
+				#{useOpenid}
+		)
+		]]>
+	</insert>
 	<!-- 信息插入 -->
 	<insert id="addExpDecorateUser" parameterType="com.suyin.decorate.model.ExpDecorateUser" useGeneratedKeys="true" keyProperty="id">
 	<![CDATA[

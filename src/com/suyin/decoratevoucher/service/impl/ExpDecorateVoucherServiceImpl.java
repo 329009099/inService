@@ -61,4 +61,22 @@ public class ExpDecorateVoucherServiceImpl implements ExpDecorateVoucherService{
 		// TODO Auto-generated method stub
 		return ExpDecorateVoucherMapper.findExpDecorateUserVoucherByPage(condition);
 	}
+
+	@Override
+	public void saveUserVoucher(ExpDecorateUserVoucher voucherUser) {
+		// TODO Auto-generated method stub
+		ExpDecorateVoucherMapper.saveUserVoucher(voucherUser);
+	}
+
+	@Override
+	public void updateRemNum(Integer id) {
+		// TODO Auto-generated method stub
+		ExpDecorateVoucherMapper.updateRemNum(id);
+	}
+
+	@Override
+	public void updateVoucherPayState(Map<String,Object>params) {
+		// TODO Auto-generated method stub
+		ExpDecorateVoucherMapper.updateVoucherPayState(params);
+	}
 }
